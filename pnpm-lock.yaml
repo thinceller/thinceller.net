@@ -6,7 +6,9 @@ settings:
 
 importers:
 
-  .:
+  .: {}
+
+  apps/top:
     dependencies:
       next:
         specifier: 14.2.5
