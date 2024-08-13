@@ -1,9 +1,7 @@
-import React from 'react'
-
 export function Blog() {
   return (
     <section>
-      <h2>Blog</h2>
+      <h2 className="text-3xl">Blog</h2>
     </section>
   )
 }

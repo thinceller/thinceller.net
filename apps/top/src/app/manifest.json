@@ -1,0 +1,17 @@
+{
+  "name": "thinceller",
+  "short_name": "thinceller",
+  "description": "thinceller's website",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fff",
+  "theme_color": "#fff",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}
