@@ -31,7 +31,7 @@
     "@textlint/textlint-plugin-markdown": "15.3.0",
     "@types/markdown-it": "14.1.2",
     "@types/mdx": "2.0.13",
-    "@types/node": "22.19.1",
+    "@types/node": "24.10.1",
     "@types/react": "19.2.4",
     "babel-plugin-react-compiler": "1.0.0",
     "postcss": "8.5.6",
