@@ -4,7 +4,7 @@ AI coding agents向けのプロジェクトガイドラインです。このブ�
 
 ## プロジェクト概要
 
-Next.js 16.0.3 (App Router) を使用した個人サイト（ブログ機能含む）です。
+Next.js 16.0.7 (App Router) を使用した個人サイト（ブログ機能含む）です。
 Vercelにデプロイされ、日本語技術記事に特化した機能を持ちます。
 
 ## セットアップコマンド
@@ -144,8 +144,8 @@ pnpm build:analyze
 ## アーキテクチャ詳細
 
 ### 技術スタック
-- **Next.js 16.0.3** + App Router
-- **React 19.2.0** + React DOM 19.2.0
+- **Next.js 16.0.7** + App Router
+- **React 19.2.1** + React DOM 19.2.1
 - **MDX 3.1.1** + カスタム処理パイプライン
 - **Tailwind CSS 4.1.17** + カスタムタイポグラフィ
 - **Shiki 3.15.0** シンタックスハイライト（Night Owlテーマ）
