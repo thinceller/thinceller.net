@@ -149,7 +149,7 @@ pnpm build:analyze
 - **MDX 3.1.1** + カスタム処理パイプライン
 - **Tailwind CSS 4.1.18** + カスタムタイポグラフィ
 - **Shiki 3.15.0** シンタックスハイライト（Night Owlテーマ）
-- **Biome 2.3.8** コード品質管理
+- **Biome 2.3.10** コード品質管理
 - **Vercel** ホスティング
 
 ### ディレクトリ構造
@@ -181,6 +181,7 @@ src/
 │   ├── robots.ts                     # robots.txt生成
 │   └── sitemap.ts                    # サイトマップ生成
 ├── components/                       # 再利用可能コンポーネント
+├── contexts/                         # React Context定義
 ├── lib/                              # ユーティリティ関数
 └── styles/                           # グローバルスタイル
 _posts/                               # MDX記事ファイル
