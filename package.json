@@ -53,11 +53,6 @@
     "format": "biome check --write",
     "typecheck": "tsc --noEmit"
   },
-  "nextBundleAnalysis": {
-    "budget": 358400,
-    "budgetPercentIncreaseRed": 20,
-    "showDetails": true
-  },
   "pnpm": {
     "onlyBuiltDependencies": [
       "@tailwindcss/oxide",
