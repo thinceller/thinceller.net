@@ -106,6 +106,6 @@ export const getPostBySlug = async (slug: string): Promise<MDXPostData> => {
   return {
     content,
     frontmatter: validatedFrontmatter,
-    headings: (vfile.data.headings as Heading[]) || [],
+    headings: Array.isArray(vfile.data.headings) ? vfile.data.headings : [],
   };
 };
