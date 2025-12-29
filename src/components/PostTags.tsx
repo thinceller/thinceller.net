@@ -11,7 +11,7 @@ export const PostTags: FC<Props> = ({ tags }) => {
   }
 
   return (
-    <div className="flex flex-wrap gap-2 mt-2">
+    <div className="flex flex-wrap justify-center gap-2 mt-2">
       {tags.map((tag) => (
         <Link
           key={tag}

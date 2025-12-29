@@ -11,8 +11,10 @@ type Props = {
 export const PostTitle: FC<Props> = ({ title, date, tags }) => {
   return (
     <>
-      <h1 className="my-4 text-custom-3xl font-bold">{title}</h1>
-      <p>{formatDate(date)} 公開</p>
+      <h1 className="my-4 text-custom-3xl font-bold text-center [word-break:auto-phrase]">
+        {title}
+      </h1>
+      <p className="text-center">{formatDate(date)} 公開</p>
       <PostTags tags={tags} />
     </>
   );
