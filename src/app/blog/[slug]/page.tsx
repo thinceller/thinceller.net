@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { PostFooter } from '@/components/PostFooter';
 import { PostTitle } from '@/components/PostTitle';
 import { RelatedPosts } from '@/components/RelatedPosts';
+import { TableOfContents } from '@/components/TableOfContents';
 import { BLOG_AUTHOR, BLOG_NAME, SITE_NAME } from '@/lib/constants';
 import { getPostBySlug } from '@/lib/mdx';
 import { getAllPosts, getRelatedPosts } from '@/lib/post';
@@ -65,28 +66,34 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
 export default async function Page(props: Props) {
   const params = await props.params;
-  const { content, frontmatter } = await getPostBySlug(params.slug);
+  const { content, frontmatter, headings } = await getPostBySlug(params.slug);
 
   // 関連記事を取得
   const relatedPosts = getRelatedPosts(frontmatter.tags || [], params.slug);
 
   return (
-    <>
-      <div className="my-10 pb-8">
-        <PostTitle
-          title={frontmatter.title}
-          date={frontmatter.publishedTime}
-          tags={frontmatter.tags}
-        />
-      </div>
+    <div className="lg:flex lg:gap-8">
+      <article className="flex-1 min-w-0">
+        <div className="my-10 pb-8">
+          <PostTitle
+            title={frontmatter.title}
+            date={frontmatter.publishedTime}
+            tags={frontmatter.tags}
+          />
+        </div>
 
-      {content}
+        {content}
 
-      {relatedPosts.length > 0 && <RelatedPosts posts={relatedPosts} />}
+        {relatedPosts.length > 0 && <RelatedPosts posts={relatedPosts} />}
 
-      <div className="my-10">
-        <PostFooter />
-      </div>
-    </>
+        <div className="my-10">
+          <PostFooter />
+        </div>
+      </article>
+
+      <aside className="hidden lg:block lg:w-64 lg:shrink-0 mt-10 self-start sticky top-24">
+        <TableOfContents headings={headings} />
+      </aside>
+    </div>
   );
 }

@@ -65,6 +65,9 @@ importers:
       shiki:
         specifier: 3.20.0
         version: 3.20.0
+      unist-util-visit:
+        specifier: 5.0.0
+        version: 5.0.0
       valibot:
         specifier: 1.2.0
         version: 1.2.0(typescript@5.9.3)
@@ -81,6 +84,9 @@ importers:
       '@textlint/textlint-plugin-markdown':
         specifier: 15.5.0
         version: 15.5.0
+      '@types/hast':
+        specifier: 3.0.4
+        version: 3.0.4
       '@types/markdown-it':
         specifier: 14.1.2
         version: 14.1.2
