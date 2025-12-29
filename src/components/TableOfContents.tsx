@@ -1,72 +1,104 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Heading } from '@/lib/heading';
 
 type Props = {
   headings: Heading[];
 };
 
-const HEADER_OFFSET = 100;
-
-function throttle<T extends (...args: unknown[]) => void>(
-  fn: T,
-  delay: number,
-): T {
-  let lastCall = 0;
-  return ((...args) => {
-    const now = Date.now();
-    if (now - lastCall >= delay) {
-      lastCall = now;
-      fn(...args);
-    }
-  }) as T;
-}
+// ヘッダーの高さ (top-24 = 6rem = 96px)
+const HEADER_HEIGHT = 96;
 
 export function TableOfContents({ headings }: Props) {
   const [activeId, setActiveId] = useState<string>('');
+  const headingElementsRef = useRef<Map<string, IntersectionObserverEntry>>(
+    new Map(),
+  );
 
-  const updateActiveHeading = useCallback(() => {
-    const scrollY = window.scrollY;
+  useEffect(() => {
+    if (headings.length === 0) return;
 
-    // ページ最上部の場合は最初の見出しをactive
-    if (scrollY < HEADER_OFFSET) {
-      if (headings.length > 0) {
-        setActiveId(headings[0].id);
+    // 初期値を設定
+    setActiveId(headings[0].id);
+
+    // 現在のスクロール位置に基づいてアクティブな見出しを計算
+    const getActiveHeadingId = (): string => {
+      const scrollY = window.scrollY;
+
+      // ページ最上部の場合は最初の見出し
+      if (scrollY < HEADER_HEIGHT) {
+        return headings[0].id;
       }
-      return;
-    }
 
-    // 現在のスクロール位置より上にある最後の見出しを探す
-    let currentHeading = headings[0]?.id || '';
+      // ページ最下部かどうかをチェック
+      const scrollHeight = document.documentElement.scrollHeight;
+      const clientHeight = window.innerHeight;
+      const isAtBottom = scrollY + clientHeight >= scrollHeight - 10;
 
+      // 現在のスクロール位置より上にある最後の見出しを探す
+      let activeId = headings[0].id;
+
+      for (const heading of headings) {
+        const element = document.getElementById(heading.id);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+
+          // ページ最下部の場合: ビューポート内に表示されている見出しも考慮
+          if (isAtBottom && rect.top >= 0 && rect.top < clientHeight) {
+            activeId = heading.id;
+            continue;
+          }
+
+          // 通常のロジック: スクロール位置より上にある見出しを探す
+          const absoluteTop = rect.top + scrollY;
+          if (absoluteTop <= scrollY + HEADER_HEIGHT) {
+            activeId = heading.id;
+          } else if (!isAtBottom) {
+            break;
+          }
+        }
+      }
+
+      return activeId;
+    };
+
+    const callback: IntersectionObserverCallback = () => {
+      setActiveId(getActiveHeadingId());
+    };
+
+    const observer = new IntersectionObserver(callback, {
+      rootMargin: `-${HEADER_HEIGHT}px 0px -80% 0px`,
+    });
+
+    // 各見出し要素を監視
     for (const heading of headings) {
       const element = document.getElementById(heading.id);
       if (element) {
-        const top = element.offsetTop;
-        if (top <= scrollY + HEADER_OFFSET) {
-          currentHeading = heading.id;
-        } else {
-          break;
-        }
+        observer.observe(element);
       }
     }
 
-    setActiveId(currentHeading);
-  }, [headings]);
+    // ページ最下部のエッジケースに対応するためのスクロールハンドラ
+    const handleScroll = () => {
+      const scrollHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.scrollY;
+      const clientHeight = window.innerHeight;
 
-  useEffect(() => {
-    const throttledUpdate = throttle(updateActiveHeading, 100);
+      // ページ最下部付近の場合、アクティブな見出しを再計算
+      if (scrollTop + clientHeight >= scrollHeight - 100) {
+        setActiveId(getActiveHeadingId());
+      }
+    };
 
-    // 初期化
-    updateActiveHeading();
-
-    window.addEventListener('scroll', throttledUpdate, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
-      window.removeEventListener('scroll', throttledUpdate);
+      observer.disconnect();
+      window.removeEventListener('scroll', handleScroll);
+      headingElementsRef.current.clear();
     };
-  }, [updateActiveHeading]);
+  }, [headings]);
 
   if (headings.length === 0) {
     return null;
