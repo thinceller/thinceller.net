@@ -22,6 +22,7 @@
     "rehype-code-titles": "1.2.1",
     "rehype-slug": "6.0.0",
     "shiki": "3.20.0",
+    "unist-util-visit": "5.0.0",
     "valibot": "1.2.0"
   },
   "devDependencies": {
@@ -29,6 +30,7 @@
     "@next/bundle-analyzer": "16.1.1",
     "@tailwindcss/postcss": "4.1.18",
     "@textlint/textlint-plugin-markdown": "15.5.0",
+    "@types/hast": "3.0.4",
     "@types/markdown-it": "14.1.2",
     "@types/mdx": "2.0.13",
     "@types/node": "22.19.3",

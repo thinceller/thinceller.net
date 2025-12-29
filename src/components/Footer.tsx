@@ -4,7 +4,7 @@ import type { FC } from 'react';
 export const Footer: FC = () => {
   return (
     <footer className="border-t border-gray-200 dark:border-gray-800">
-      <div className="flex flex-row justify-between mx-auto max-w-(--breakpoint-md) p-6">
+      <div className="flex flex-row justify-between mx-auto max-w-(--breakpoint-lg) p-6">
         <p className="text-gray-600 dark:text-gray-400">
           &copy; {new Date().getFullYear()} thinceller
         </p>

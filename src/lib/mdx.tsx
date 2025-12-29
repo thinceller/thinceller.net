@@ -12,11 +12,14 @@ import rehypeSlug from 'rehype-slug';
 import * as v from 'valibot';
 import { CustomMDXComponents } from '@/components/MDXComponent';
 import { type FrontMatter, frontMatterSchema } from './frontmatter';
+import type { Heading } from './heading';
+import { rehypeExtractHeadings } from './rehype-extract-headings';
 import { getHighlighter } from './shiki';
 
 type MDXPostData = {
   content: React.ReactElement;
   frontmatter: FrontMatter;
+  headings: Heading[];
 };
 
 export const getPostBySlug = async (slug: string): Promise<MDXPostData> => {
@@ -57,6 +60,7 @@ export const getPostBySlug = async (slug: string): Promise<MDXPostData> => {
         } satisfies RehypeShikiCoreOptions,
       ],
       rehypeSlug,
+      rehypeExtractHeadings,
       [
         rehypeAutolinkHeadings,
         {
@@ -102,5 +106,6 @@ export const getPostBySlug = async (slug: string): Promise<MDXPostData> => {
   return {
     content,
     frontmatter: validatedFrontmatter,
+    headings: Array.isArray(vfile.data.headings) ? vfile.data.headings : [],
   };
 };
