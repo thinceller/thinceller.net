@@ -83,7 +83,7 @@ export default async function Page(props: Props) {
       </div>
 
       {/* 2カラムレイアウト（左: コンテンツ、右: 目次） */}
-      <div className="lg:flex lg:gap-8">
+      <div className="lg:flex lg:gap-12">
         <article className="flex-1 min-w-0">
           {content}
 
