@@ -11,6 +11,7 @@ module.exports = {
         max: 200,
       },
       'ja-no-mixed-period': false,
+      'ja-no-weak-phrase': false,
     },
     'preset-ja-spacing': true,
     'spellcheck-tech-word': true,
