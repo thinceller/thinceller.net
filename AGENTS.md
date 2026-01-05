@@ -111,6 +111,7 @@ publishedTime: "YYYY-MM-DDTHH:mm:ssZ"
 - `components/PostTitle.tsx`: 記事タイトル表示
 - `components/MDXComponent.tsx`: Markdown記事レンダリング
 - `components/OgpCard.tsx`: OGPカード表示（外部リンクプレビュー）
+- `components/TableOfContents.tsx`: 記事目次表示（スクロール連動）
 
 ### 設計原則
 1. **再利用性**: 機能ごとに分割、共有可能な設計
