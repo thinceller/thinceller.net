@@ -38,6 +38,17 @@
     border-color: var(--color-gray-200, currentcolor);
   }
 
+  /* 日本語と英数字の間に自動スペースを適用 */
+  body {
+    text-autospace: normal;
+  }
+
+  /* コードブロックでは自動スペースを無効化 */
+  pre,
+  code {
+    text-autospace: no-autospace;
+  }
+
   /* ダークモード時のボーダー色 */
   [data-theme="dark"] *,
   [data-theme="dark"] ::after,
