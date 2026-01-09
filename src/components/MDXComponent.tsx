@@ -3,6 +3,7 @@ import Image, { type ImageProps } from 'next/image';
 import Link from 'next/link';
 import type { JSX } from 'react';
 import { Tweet, type TweetProps } from 'react-twitter-widgets';
+import { Callout } from '@/components/Callout';
 import { OgpCard } from '@/components/OgpCard';
 
 export const CustomMDXComponents: MDXComponents = {
@@ -82,4 +83,5 @@ export const CustomMDXComponents: MDXComponents = {
     );
   },
   OgpCard,
+  Callout,
 };
