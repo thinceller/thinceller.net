@@ -161,16 +161,17 @@ export function Callout({ type = 'note', title, children }: CalloutProps) {
   const displayTitle = title ?? config.label;
 
   return (
-    <aside
+    <div
       className={`mb-6 rounded-md border-l-4 p-4 ${config.containerClass}`}
       role="note"
+      aria-label={displayTitle}
     >
       <div className="flex items-center gap-2 mb-2">
         <Icon className={`w-5 h-5 ${config.iconClass}`} aria-hidden="true" />
         <span className={`font-bold ${config.titleClass}`}>{displayTitle}</span>
       </div>
       <div className="[&>p]:mb-0 [&>p:last-child]:mb-0">{children}</div>
-    </aside>
+    </div>
   );
 }
 ```
@@ -228,7 +229,8 @@ export const CustomMDXComponents: MDXComponents = {
 
 ### アクセシビリティ
 
-- `role="note"` 属性でスクリーンリーダー対応
+- `<div role="note">` でスクリーンリーダーに補足情報であることを伝える
+- `aria-label` でコールアウトの種類を明示
 - アイコンは `aria-hidden="true"` で装飾として扱う
 - 適切なコントラスト比を確保
 
@@ -314,8 +316,122 @@ pnpm build
 - [lucide-react](https://lucide.dev/guide/packages/lucide-react) - アイコン
 - [remark-github-alerts](https://github.com/antfu/markdown-it-github-alerts) - GitHub記法プラグイン（将来拡張用）
 
+## 技術的検討事項
+
+### 1. HTML要素の選択: `<aside>` vs `<div>`
+
+#### 検討結果
+
+**結論: `<div role="note">` を使用する**
+
+#### `<aside>` が不適切な理由
+
+[MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/aside) および [WHATWG HTML仕様](https://html.spec.whatwg.org/multipage/sections.html) によると：
+
+- `<aside>` は「文書のメインコンテンツに**間接的にしか関連しない**（tangentially related）部分」を表す
+- サイドバー、広告、プルクォート、関連リンクなどに使用
+- 仕様には「parentheticals（挿入句）には適切ではない」と明記されている
+
+コールアウト（警告、ヒント、補足情報）は：
+
+- 記事本文に**直接関連する**補足情報
+- 読者が本文を読む流れの中で伝えるべき内容
+- 本文から取り除くと意味が変わる可能性がある
+
+したがって、`<aside>` は意味的に適切ではない。
+
+#### 代替案の比較
+
+| 要素 | 適切性 | 理由 |
+|------|--------|------|
+| `<div role="note">` | ★★★ | ARIAロールでスクリーンリーダーに適切に伝わる。Docusaurusも同様の実装 |
+| `<section>` | ★★ | セクションとして意味を持つが、やや大げさ |
+| `<aside>` | ★ | 「間接的に関連するコンテンツ」向けで、コールアウトには不適切 |
+
+#### 参考: WHATWGでの `<callout>` 要素提案
+
+[WHATWGでは `<callout>` 要素の提案](https://github.com/whatwg/html/issues/10100)がされているが、まだ標準化されていない。現時点では `<div role="note">` が最も適切。
+
+#### 修正後のコード
+
+```tsx
+export function Callout({ type = 'note', title, children }: CalloutProps) {
+  const config = calloutConfig[type];
+  const Icon = config.icon;
+  const displayTitle = title ?? config.label;
+
+  return (
+    <div
+      className={`mb-6 rounded-md border-l-4 p-4 ${config.containerClass}`}
+      role="note"
+      aria-label={displayTitle}
+    >
+      <div className="flex items-center gap-2 mb-2">
+        <Icon className={`w-5 h-5 ${config.iconClass}`} aria-hidden="true" />
+        <span className={`font-bold ${config.titleClass}`}>{displayTitle}</span>
+      </div>
+      <div className="[&>p]:mb-0 [&>p:last-child]:mb-0">{children}</div>
+    </div>
+  );
+}
+```
+
+### 2. Tailwind CSS v4でのクラス名検出
+
+#### 検討結果
+
+**結論: 現在の実装方法（オブジェクト内の文字列リテラル）で問題なし**
+
+#### Tailwind CSS v4の仕様
+
+[Tailwind CSS公式ドキュメント](https://tailwindcss.com/docs/detecting-classes-in-source-files)によると：
+
+- Tailwindはソースファイルを**プレーンテキスト**としてスキャンし、クラス名を検出
+- コードとして解析するのではなく、文字列パターンとして検出
+- **文字列リテラルとして記述されていれば検出される**
+
+#### 問題になるケース
+
+```tsx
+// ❌ NG: テンプレートリテラルで動的生成
+const color = 'blue';
+const className = `bg-${color}-500`; // 検出されない
+
+// ✅ OK: 完全な文字列リテラル
+const config = {
+  note: {
+    containerClass: 'bg-blue-50 dark:bg-blue-950', // 検出される
+  },
+};
+```
+
+#### 現在の実装計画
+
+`calloutConfig` オブジェクト内のクラス名は**完全な文字列リテラル**として記述されているため、Tailwindは正しく検出できる。
+
+#### 注意事項
+
+1. **テンプレートリテラルで動的にクラス名を生成しない**
+2. **クラス名を分割して結合しない**（例: `'bg-' + 'blue-500'`）
+3. 万が一検出されない場合は `@source inline()` を使用
+
+```css
+/* globals.css - 万が一の場合のフォールバック */
+@source inline("bg-blue-50 dark:bg-blue-950 border-blue-500 ...");
+```
+
+#### Tailwind v4での safelist 廃止について
+
+Tailwind CSS v4では `safelist` オプションが廃止された。代わりに：
+
+- `@source inline()` ディレクティブを使用
+- または safelist 用のテキストファイルを `@source` で読み込む
+
+現在の実装では safelist は不要だが、将来的に動的なクラス名が必要になった場合は上記の方法で対応する。
+
 ## 備考
 
 - アイコンには既存で使用している `lucide-react` を活用
 - Tailwind CSS v4の設定に合わせたクラス名を使用
 - 既存の `blockquote` スタイルとの差別化を意識したデザイン
+- トップレベル要素は `<div role="note">` を使用（`<aside>` ではない）
