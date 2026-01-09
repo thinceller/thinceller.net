@@ -79,13 +79,12 @@ pnpm lint && pnpm format && pnpm typecheck
 ---
 title: "記事のタイトル"
 description: "記事の概要説明"
-date: "YYYY-MM-DD"
 publishedTime: "YYYY-MM-DDTHH:mm:ssZ"
 ---
 ```
 
 ### オプション項目
-- `modifiedTime`: 更新日時
+- `modifiedTime`: 更新日時（ISO8601形式）
 - `tags`: タグ配列
 
 ### 記事構造ガイドライン
