@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
+import type { CollectionPage, WithContext } from 'schema-dts';
+
+import { JsonLd } from '@/components/JsonLd';
 import { PostCard } from '@/components/PostCard';
-import { BLOG_NAME } from '@/lib/constants';
+import { BLOG_NAME, BLOG_URL } from '@/lib/constants';
 import { getAllTags, getPostsByTag } from '@/lib/post';
 
 export const dynamicParams = false;
@@ -45,22 +48,37 @@ export default async function Page(props: Props) {
   const tag = decodeURIComponent(params.tag);
   const posts = getPostsByTag(tag);
 
+  const jsonLd: WithContext<CollectionPage> = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${tag} | ${BLOG_NAME}`,
+    description: `${tag}に関する記事一覧`,
+    url: `${BLOG_URL}/blog/tags/${params.tag}`,
+    about: {
+      '@type': 'Thing',
+      name: tag,
+    },
+  };
+
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-8">
-        <span className="text-gray-600">#</span>
-        {tag}
-      </h1>
-      <div className="grid gap-3">
-        {posts.map((post) => (
-          <PostCard
-            key={post.slug}
-            slug={post.slug}
-            title={post.title}
-            publishedTime={post.publishedTime}
-          />
-        ))}
+    <>
+      <JsonLd data={jsonLd} />
+      <div>
+        <h1 className="text-3xl font-bold mb-8">
+          <span className="text-gray-600">#</span>
+          {tag}
+        </h1>
+        <div className="grid gap-3">
+          {posts.map((post) => (
+            <PostCard
+              key={post.slug}
+              slug={post.slug}
+              title={post.title}
+              publishedTime={post.publishedTime}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
