@@ -4,7 +4,6 @@ import * as v from 'valibot';
 export const frontMatterSchema = v.object({
   title: v.string(),
   description: v.string(),
-  date: v.string(),
   publishedTime: v.string(),
   modifiedTime: v.optional(v.string()),
   tags: v.nullable(v.array(v.string())),
