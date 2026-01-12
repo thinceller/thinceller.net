@@ -97,20 +97,22 @@ publishedTime: "YYYY-MM-DDTHH:mm:ssZ"
 ## コンポーネント設計
 
 ### 主要コンポーネント
-- `components/Layout.tsx`: ページ全体レイアウト
-- `components/Header.tsx`: ヘッダーコンポーネント
-- `components/Footer.tsx`: フッターコンポーネント
-- `components/Navigation.tsx`: ナビゲーションメニュー
-- `components/ThemeToggle.tsx`: ダークモード切り替えコンポーネント
-- `components/PostCard.tsx`: 記事カード表示（一貫したデザイン）
-- `components/RelatedPosts.tsx`: 関連記事表示
+- `components/Callout.tsx`: コールアウト表示（情報、警告、ヒント等）
 - `components/DateFormatter.tsx`: 日付フォーマット表示
+- `components/Footer.tsx`: フッターコンポーネント
+- `components/Header.tsx`: ヘッダーコンポーネント
+- `components/JsonLd.tsx`: JSON-LD構造化データコンポーネント
+- `components/Layout.tsx`: ページ全体レイアウト
+- `components/MDXComponent.tsx`: Markdown記事レンダリング
+- `components/Navigation.tsx`: ナビゲーションメニュー
+- `components/OgpCard.tsx`: OGPカード表示（外部リンクプレビュー）
+- `components/PostCard.tsx`: 記事カード表示（一貫したデザイン）
 - `components/PostFooter.tsx`: 記事フッター
 - `components/PostTags.tsx`: 記事タグ表示
 - `components/PostTitle.tsx`: 記事タイトル表示
-- `components/MDXComponent.tsx`: Markdown記事レンダリング
-- `components/OgpCard.tsx`: OGPカード表示（外部リンクプレビュー）
+- `components/RelatedPosts.tsx`: 関連記事表示
 - `components/TableOfContents.tsx`: 記事目次表示（スクロール連動）
+- `components/ThemeToggle.tsx`: ダークモード切り替えコンポーネント
 
 ### 設計原則
 1. **再利用性**: 機能ごとに分割、共有可能な設計
@@ -149,7 +151,7 @@ pnpm build:analyze
 - **MDX 3.1.1** + カスタム処理パイプライン
 - **Tailwind CSS 4.1.18** + カスタムタイポグラフィ
 - **Shiki 3.20.0** シンタックスハイライト（Night Owlテーマ）
-- **Biome 2.3.10** コード品質管理
+- **Biome 2.3.11** コード品質管理
 - **Vercel** ホスティング
 
 ### ディレクトリ構造
