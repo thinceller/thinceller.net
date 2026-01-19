@@ -4,7 +4,7 @@ AI coding agents向けのプロジェクトガイドラインです。このブ�
 
 ## プロジェクト概要
 
-Next.js 16.1.1 (App Router) を使用した個人サイト（ブログ機能含む）です。
+Next.js 16.1.2 (App Router) を使用した個人サイト（ブログ機能含む）です。
 Vercelにデプロイされ、日本語技術記事に特化した機能を持ちます。
 
 ## セットアップコマンド
@@ -146,7 +146,7 @@ pnpm build:analyze
 ## アーキテクチャ詳細
 
 ### 技術スタック
-- **Next.js 16.1.1** + App Router
+- **Next.js 16.1.2** + App Router
 - **React 19.2.3** + React DOM 19.2.3
 - **MDX 3.1.1** + カスタム処理パイプライン
 - **Tailwind CSS 4.1.18** + カスタムタイポグラフィ
