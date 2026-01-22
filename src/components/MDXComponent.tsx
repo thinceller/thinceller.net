@@ -4,23 +4,11 @@ import Link from 'next/link';
 import type { JSX } from 'react';
 import { Tweet, type TweetProps } from 'react-twitter-widgets';
 import { Callout } from '@/components/Callout';
+import { FaviconLink } from '@/components/FaviconLink';
 import { OgpCard } from '@/components/OgpCard';
 
 export const CustomMDXComponents: MDXComponents = {
-  a: (p: JSX.IntrinsicElements['a']) => {
-    const { href, ...rest } = p;
-    // TODO: Fix internal link
-    // const isInternalLink =
-    //   href && (href.startsWith('/') || href.startsWith('#'));
-
-    return (
-      <Link
-        className="text-blue-500 dark:text-blue-400 hover:underline"
-        href={href ?? '#'}
-        {...rest}
-      />
-    );
-  },
+  a: (p: JSX.IntrinsicElements['a']) => <FaviconLink {...p} />,
   pre: (p: JSX.IntrinsicElements['pre']) => (
     <pre className="overflow-x-auto max-w-full p-4 rounded-md" {...p} />
   ),
