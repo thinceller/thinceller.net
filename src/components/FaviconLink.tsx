@@ -8,34 +8,39 @@ type Props = JSX.IntrinsicElements['a'] & {
   children?: ReactNode;
 };
 
+type ExternalLinkInfo = {
+  isExternal: true;
+  hostname: string;
+};
+
+type InternalLinkInfo = {
+  isExternal: false;
+  hostname: null;
+};
+
 /**
- * Determines if a URL is external (different domain).
+ * Analyzes a URL and returns external link information.
+ * Returns hostname for external links, null for internal links.
  */
-function isExternalUrl(href: string): boolean {
+function analyzeUrl(
+  href: string | undefined,
+): ExternalLinkInfo | InternalLinkInfo {
   if (!href || href.startsWith('#') || href.startsWith('/')) {
-    return false;
+    return { isExternal: false, hostname: null };
   }
 
   try {
     const url = new URL(href);
-    return (
+    const isExternal =
       url.protocol === 'http:' ||
-      (url.protocol === 'https:' && url.hostname !== 'thinceller.net')
-    );
-  } catch {
-    return false;
-  }
-}
+      (url.protocol === 'https:' && url.hostname !== 'thinceller.net');
 
-/**
- * Extracts the hostname from a URL for favicon fetching.
- */
-function getHostname(href: string): string | null {
-  try {
-    const url = new URL(href);
-    return url.hostname;
+    if (isExternal) {
+      return { isExternal: true, hostname: url.hostname };
+    }
+    return { isExternal: false, hostname: null };
   } catch {
-    return null;
+    return { isExternal: false, hostname: null };
   }
 }
 
@@ -46,8 +51,7 @@ function getHostname(href: string): string | null {
 export function FaviconLink({ href, children, ...rest }: Props) {
   const [faviconError, setFaviconError] = useState(false);
 
-  const isExternal = href ? isExternalUrl(href) : false;
-  const hostname = href && isExternal ? getHostname(href) : null;
+  const { isExternal, hostname } = analyzeUrl(href);
   const faviconUrl = hostname
     ? `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`
     : null;
@@ -58,7 +62,7 @@ export function FaviconLink({ href, children, ...rest }: Props) {
 
   return (
     <Link
-      className="inline-flex items-baseline gap-1 text-blue-500 dark:text-blue-400 hover:underline"
+      className="inline text-blue-500 dark:text-blue-400 hover:underline"
       href={href ?? '#'}
       {...linkProps}
       {...rest}
@@ -69,7 +73,7 @@ export function FaviconLink({ href, children, ...rest }: Props) {
           alt=""
           width={16}
           height={16}
-          className="inline-block shrink-0 align-text-bottom"
+          className="inline align-baseline mr-1"
           loading="lazy"
           unoptimized
           onError={() => setFaviconError(true)}
