@@ -58,7 +58,7 @@ export function FaviconLink({ href, children, ...rest }: Props) {
 
   return (
     <Link
-      className="inline-flex items-center gap-1 text-blue-500 dark:text-blue-400 hover:underline"
+      className="inline-flex items-baseline gap-1 text-blue-500 dark:text-blue-400 hover:underline"
       href={href ?? '#'}
       {...linkProps}
       {...rest}
