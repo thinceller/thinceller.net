@@ -4,7 +4,7 @@ AI coding agents向けのプロジェクトガイドラインです。このブ�
 
 ## プロジェクト概要
 
-Next.js 16.1.1 (App Router) を使用した個人サイト（ブログ機能含む）です。
+Next.js 16.1.4 (App Router) を使用した個人サイト（ブログ機能含む）です。
 Vercelにデプロイされ、日本語技術記事に特化した機能を持ちます。
 
 ## セットアップコマンド
@@ -99,6 +99,7 @@ publishedTime: "YYYY-MM-DDTHH:mm:ssZ"
 ### 主要コンポーネント
 - `components/Callout.tsx`: コールアウト表示（情報、警告、ヒント等）
 - `components/DateFormatter.tsx`: 日付フォーマット表示
+- `components/FaviconLink.tsx`: 外部リンク用ファビコン表示コンポーネント
 - `components/Footer.tsx`: フッターコンポーネント
 - `components/Header.tsx`: ヘッダーコンポーネント
 - `components/JsonLd.tsx`: JSON-LD構造化データコンポーネント
@@ -146,12 +147,12 @@ pnpm build:analyze
 ## アーキテクチャ詳細
 
 ### 技術スタック
-- **Next.js 16.1.1** + App Router
+- **Next.js 16.1.4** + App Router
 - **React 19.2.3** + React DOM 19.2.3
 - **MDX 3.1.1** + カスタム処理パイプライン
 - **Tailwind CSS 4.1.18** + カスタムタイポグラフィ
 - **Shiki 3.20.0** シンタックスハイライト（Night Owlテーマ）
-- **Biome 2.3.11** コード品質管理
+- **Biome 2.3.12** コード品質管理
 - **Vercel** ホスティング
 
 ### ディレクトリ構造
