@@ -14,7 +14,7 @@
     "feed": "5.1.0",
     "gray-matter": "4.0.3",
     "lucide-react": "0.562.0",
-    "next": "16.1.4",
+    "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-twitter-widgets": "1.11.0",
@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.13",
-    "@next/bundle-analyzer": "16.1.4",
+    "@next/bundle-analyzer": "16.1.6",
     "@tailwindcss/postcss": "4.1.18",
     "@textlint/textlint-plugin-markdown": "15.5.1",
     "@types/hast": "3.0.4",
