@@ -93,6 +93,7 @@ publishedTime: "YYYY-MM-DDTHH:mm:ssZ"
 3. 画像は `public/images/` に配置
 4. 内部リンクは相対パス使用
 5. OGP画像は自動生成（Route Handler経由）
+6. Mermaid.jsダイアグラムは ```mermaid``` コードブロックで記述（自動描画・テーマ連動）
 
 ## コンポーネント設計
 
@@ -104,6 +105,7 @@ publishedTime: "YYYY-MM-DDTHH:mm:ssZ"
 - `components/Header.tsx`: ヘッダーコンポーネント
 - `components/JsonLd.tsx`: JSON-LD構造化データコンポーネント
 - `components/Layout.tsx`: ページ全体レイアウト
+- `components/MermaidDiagram.tsx`: Mermaid.jsダイアグラム描画（ライト/ダークモード対応）
 - `components/MDXComponent.tsx`: Markdown記事レンダリング
 - `components/Navigation.tsx`: ナビゲーションメニュー
 - `components/OgpCard.tsx`: OGPカード表示（外部リンクプレビュー）
@@ -193,6 +195,7 @@ public/                               # 静的アセット
 
 ### Content Pipeline
 - **gray-matter**: フロントマター解析
+- **rehype-mermaid（カスタム）**: Mermaidコードブロックをダイアグラムコンポーネントに変換
 - **rehype-slug** + **rehype-autolink-headings**: ナビゲーション
 - **textlint**: 日本語技術文書校正
 
