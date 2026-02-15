@@ -5,6 +5,7 @@
   "labels": ["dependencies"],
   "prHourlyLimit": 5,
   "prConcurrentLimit": 20,
+  "postUpdateOptions": ["pnpmDedupe"],
   "major": {
     "minimumReleaseAge": "7 days"
   },
