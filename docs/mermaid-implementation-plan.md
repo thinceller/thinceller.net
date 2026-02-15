@@ -213,9 +213,13 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
     return () => { cancelled = true; };
   }, [chart, resolvedTheme, diagramId]);
 
+  // CLS軽減: 固定高さプレースホルダ
   if (isLoading) {
     return (
-      <div className="mb-6 flex items-center justify-center rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-8">
+      <div
+        className="mb-6 flex items-center justify-center rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-8"
+        style={{ minHeight: '200px' }}
+      >
         <span className="text-gray-400 dark:text-gray-500 text-sm">
           Loading diagram...
         </span>
@@ -223,6 +227,8 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
     );
   }
 
+  // CLS軽減: テーマ切り替え時はsvgが既にあるため、
+  // isLoading=false のままバックグラウンドで再描画→setSvgで差し替え
   return (
     <div
       ref={containerRef}
@@ -237,7 +243,8 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
 **ポイント:**
 - `useTheme()` の `resolvedTheme` を `useEffect` の依存配列に入れることで、テーマ切り替え時に自動再描画
 - `mermaid.render()` はユニークなIDが必要 → `useId()` で生成
-- ローディング中はスケルトン的なプレースホルダを表示
+- **CLS軽減**: ローディング中は `min-height: 200px` の固定高さプレースホルダを表示し、描画後のレイアウトシフトを抑制
+- **CLS軽減**: テーマ変更時は `isLoading` が既に `false` なので旧SVGを維持したまま新SVGをバックグラウンド生成→差し替え（ダイアグラムが消えてシフトが起きることを防止）
 - エラー時はフォールバック表示（またはコードブロックをそのまま表示）
 - コンテナに `overflow-x-auto` で大きい図のスクロール対応
 
@@ -288,6 +295,41 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
 
 基本的にはTailwindクラスで対応するが、Mermaid生成SVGの内部要素に対する微調整が必要な場合にCSSを追加。
 
+### Step 7: ドキュメント更新
+
+#### 7a. `AGENTS.md` — 主要コンポーネント一覧に追加
+
+```diff
+ ### 主要コンポーネント
+ - `components/Callout.tsx`: コールアウト表示（情報、警告、ヒント等）
+ - `components/DateFormatter.tsx`: 日付フォーマット表示
+ ...
++- `components/MermaidDiagram.tsx`: Mermaid.jsダイアグラム描画（ライト/ダークモード対応）
+ - `components/Navigation.tsx`: ナビゲーションメニュー
+```
+
+#### 7b. `AGENTS.md` — ブログ記事作成ルール > 記事構造ガイドラインに追加
+
+```diff
+ ### 記事構造ガイドライン
+ 1. 見出し階層の適切な使用（h1 → h2 → h3）
+ 2. コードブロックには言語を指定
+ 3. 画像は `public/images/` に配置
+ 4. 内部リンクは相対パス使用
+ 5. OGP画像は自動生成（Route Handler経由）
++6. Mermaid.jsダイアグラムは ` ```mermaid ` コードブロックで記述（自動描画・テーマ連動）
+```
+
+#### 7c. `AGENTS.md` — Content Pipelineセクションに追加
+
+```diff
+ ### Content Pipeline
+ - **gray-matter**: フロントマター解析
++- **rehype-mermaid（カスタム）**: Mermaidコードブロックをダイアグラムコンポーネントに変換
+ - **rehype-slug** + **rehype-autolink-headings**: ナビゲーション
+ - **textlint**: 日本語技術文書校正
+```
+
 ---
 
 ## ファイル変更一覧
@@ -300,6 +342,7 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
 | `src/components/MDXComponent.tsx` | 修正 | `MermaidDiagram` をカスタムコンポーネントに登録 |
 | `src/lib/mdx.tsx` | 修正 | `rehypeMermaid` をプラグインチェーンに追加 |
 | `src/styles/styles.css` | 修正（必要に応じて） | Mermaid SVG用のスタイル微調整 |
+| `AGENTS.md` | 修正 | MermaidDiagramコンポーネント・記事ガイドライン・Content Pipeline追記 |
 
 ---
 
@@ -354,6 +397,94 @@ graph TD
 
 ---
 
+## Cumulative Layout Shift (CLS) 軽減策
+
+クライアントサイドレンダリングでは、mermaidライブラリのロードとSVG描画が完了するまでダイアグラムが表示されないため、レイアウトシフトが発生する。以下の施策でCLSを軽減する。
+
+### 施策1: 固定高さのプレースホルダ（採用）
+
+ローディング中のプレースホルダに `min-height` を設定し、描画後のダイアグラムとのサイズ差を減らす。
+
+```tsx
+// ローディング状態
+<div
+  className="mb-6 flex items-center justify-center rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-8"
+  style={{ minHeight: '200px' }}
+>
+  <span className="text-gray-400 dark:text-gray-500 text-sm">
+    Loading diagram...
+  </span>
+</div>
+```
+
+- `min-height: 200px` は多くのダイアグラムに対して妥当な初期値
+- 完全にシフトをゼロにはできないが、大幅に軽減される
+- シンプルで実装コストが低い
+
+### 施策2: SVGサイズに合わせたコンテナ遷移（採用）
+
+描画完了後、SVGを `dangerouslySetInnerHTML` で挿入する際にコンテナの `min-height` を解除する。これにより、プレースホルダ→実SVGの遷移がスムーズになる。
+
+```tsx
+// 描画完了後のコンテナ
+<div
+  ref={containerRef}
+  className="mb-6 flex justify-center overflow-x-auto rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 [&>svg]:max-w-full"
+  dangerouslySetInnerHTML={{ __html: svg }}
+/>
+// → min-height は不要（SVG自体が高さを決定する）
+```
+
+### 施策3: テーマ切り替え時のSVG差し替えの最適化（採用）
+
+テーマ変更による再描画では、既存のSVGを維持したままバックグラウンドで新しいSVGを生成し、完了次第差し替える。これにより、テーマ切り替え時にダイアグラムが一瞬消えてシフトが発生することを防ぐ。
+
+```tsx
+useEffect(() => {
+  let cancelled = false;
+
+  const renderDiagram = async () => {
+    const mermaid = (await import('mermaid')).default;
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: resolvedTheme === 'dark' ? 'dark' : 'default',
+      fontFamily: 'inherit',
+    });
+
+    try {
+      const { svg: renderedSvg } = await mermaid.render(diagramId, chart);
+      if (!cancelled) {
+        setSvg(renderedSvg);
+        // 初回のみローディング状態を解除
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error('Mermaid rendering error:', error);
+      if (!cancelled) {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  renderDiagram();
+  return () => { cancelled = true; };
+}, [chart, resolvedTheme, diagramId]);
+```
+
+ポイント: `setIsLoading(false)` は初回描画後に実行される。テーマ変更時は `isLoading` が既に `false` なので、旧SVGが表示されたまま新SVGがバックグラウンドで生成され、`setSvg()` で差し替わる。
+
+### 施策4: mermaidライブラリのプリロード（検討）
+
+記事ページのlayout/pageでmermaidチャンクを `<link rel="preload">` または `next/script` の `strategy="lazyOnload"` でプリロードし、実際にMermaidDiagramがマウントされた時点でのロード待ち時間を短縮する。
+
+ただし、mermaidを含まない記事でも不要なプリロードが発生するため、効果とコストのバランスを実装時に検討する。
+
+### 不採用とした案
+
+**Intersection Observerによる遅延描画**: ダイアグラムがビューポートに入ったときに初めて描画する案。CLSの観点ではスクロールして初めてシフトが発生するため体感は改善するが、根本的な解決ではなく、ユーザーがダイアグラムまでスクロールしたタイミングでシフトが目に見えて起きるため不採用。
+
+---
+
 ## バンドルサイズへの影響と対策
 
 ### 懸念
@@ -381,10 +512,15 @@ graph TD
 2. テスト用MDX記事にmermaidコードブロックを追加
 3. ブラウザでダイアグラムの描画を確認
 4. ライト/ダークモード切り替え時の再描画を確認
+   - 切り替え時にダイアグラムが一瞬消えないこと（旧SVG維持→差し替え）
 5. 大きいダイアグラムのスクロール対応を確認
-6. `pnpm lint && pnpm format && pnpm typecheck` 通過確認
-7. `pnpm build` 成功確認
-8. `pnpm build:analyze` でバンドルサイズ確認
+6. **CLS確認**: ページロード時のレイアウトシフトを確認
+   - プレースホルダの高さ（`min-height: 200px`）と描画後のSVG高さの差を目視確認
+   - Chrome DevToolsのPerformanceパネルでCLSスコアを計測
+7. `pnpm lint && pnpm format && pnpm typecheck` 通過確認
+8. `pnpm build` 成功確認
+9. `pnpm build:analyze` でバンドルサイズ確認
+10. AGENTS.mdの更新内容が正確であることを確認
 
 ---
 
