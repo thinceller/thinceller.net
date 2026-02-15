@@ -20,6 +20,22 @@ jobs:
         with:
           fetch-depth: 0 # 完全な履歴を取得（探索に必要）
 
+      - name: Check for existing PR
+        id: check-pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          EXISTING_PR=$(gh pr list --head "claude/update-agents-md" --state open --json number,url --jq '.[0] // empty')
+          if [ -n "$EXISTING_PR" ]; then
+            PR_NUMBER=$(echo "$EXISTING_PR" | jq -r '.number')
+            PR_URL=$(echo "$EXISTING_PR" | jq -r '.url')
+            echo "pr_exists=true" >> "$GITHUB_OUTPUT"
+            echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+            echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
+          else
+            echo "pr_exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Run Claude to update AGENTS.md
         uses: anthropics/claude-code-action@v1
         with:
@@ -28,6 +44,8 @@ jobs:
           prompt: |
             REPOSITORY: ${{ github.repository }}
             BRANCH: main
+            EXISTING_PR: ${{ steps.check-pr.outputs.pr_exists }}
+            EXISTING_PR_NUMBER: ${{ steps.check-pr.outputs.pr_number }}
 
             ## タスク
             このプロジェクトの構成と利用技術を包括的に探索し、AGENTS.mdファイルを最新の状態に更新してください。
@@ -42,21 +60,35 @@ jobs:
 
             ## 実行ルール
             - AGENTS.mdの内容を現在のプロジェクト状態と比較してください
-            - **変更が必要ない場合**: 何もせず終了してください（コミット不要）
-            - **変更がある場合のみ**:
+            - **変更が必要ない場合**:
+              - EXISTING_PRが"true"の場合: PR #${{ steps.check-pr.outputs.pr_number }} はもう不要です。`gh pr close ${{ steps.check-pr.outputs.pr_number }} --comment "AGENTS.mdは最新の状態のため、このPRをクローズします。"` を実行してクローズしてください。
+              - EXISTING_PRが"false"の場合: 何もせず終了してください（コミット不要）
+            - **変更がある場合**:
               1. AGENTS.mdファイルを更新
               2. 変更内容を確認
-              3. タイムスタンプ付きの新しいブランチを作成（例: claude/update-agents-md-1234567890）
-              4. 変更をコミット（コミットメッセージ: "docs: update AGENTS.md with latest project configuration"）
-              5. ブランチをpush
-              6. Pull Requestを作成
-              7. PRのタイトル: "docs: update AGENTS.md with latest project configuration"
-              8. PRの説明: 変更された項目の具体的な概要を記載（バージョン変更、新規コンポーネント追加など）
+              3. ブランチ名は固定で `claude/update-agents-md` を使用してください
+              4. mainブランチから `claude/update-agents-md` ブランチを作成（既にローカルに存在する場合は削除してから再作成）:
+                 ```
+                 git checkout main
+                 git branch -D claude/update-agents-md 2>/dev/null || true
+                 git checkout -b claude/update-agents-md
+                 ```
+              5. 変更をコミット（コミットメッセージ: "docs: update AGENTS.md with latest project configuration"）
+              6. ブランチをpush（`git push --force-with-lease origin claude/update-agents-md`）
+              7. EXISTING_PRが"true"の場合:
+                 - PRは既に存在するため、新しいPRを作成しないでください
+                 - PR #${{ steps.check-pr.outputs.pr_number }} の説明を更新してください:
+                   `gh pr edit ${{ steps.check-pr.outputs.pr_number }} --body "変更された項目の具体的な概要"`
+              8. EXISTING_PRが"false"の場合:
+                 - 新しいPull Requestを作成してください
+                 - PRのタイトル: "docs: update AGENTS.md with latest project configuration"
+                 - PRの説明: 変更された項目の具体的な概要を記載（バージョン変更、新規コンポーネント追加など）
 
             ## 重要な注意事項
             - 既存のファイル構造とフォーマットを維持してください
             - 日本語の表現や技術用語を適切に保ってください
             - プロジェクトの実態を正確に反映してください
-            - 変更がない場合はPRを作成しないでください
+            - 変更がない場合はコミットを作成しないでください
+            - ブランチ名は必ず `claude/update-agents-md`（タイムスタンプなし）を使用してください
           claude_args: |
             --allowedTools Read,Glob,Grep,Edit,Write,Bash(git:*),Bash(gh pr:*),Bash(pnpm:*),Bash(date:*)
