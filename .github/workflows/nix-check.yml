@@ -18,8 +18,8 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v6
-      - uses: DeterminateSystems/nix-installer-action@main
-      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - uses: DeterminateSystems/nix-installer-action@v21
+      - uses: DeterminateSystems/magic-nix-cache-action@v13
       - run: nix flake check
       - run: nix develop --command node --version
       - run: nix develop --command pnpm --version
