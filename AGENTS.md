@@ -9,7 +9,8 @@ Vercelにデプロイされ、日本語技術記事に特化した機能を持�
 
 ## セットアップコマンド
 
-**パッケージマネージャー:** pnpm 10.26.2
+**開発環境:** Nix Flakes + direnv（`flake.nix` で Node.js 22.x / pnpm を管理）
+**パッケージマネージャー:** pnpm（バージョンは `package.json` の `packageManager` フィールドで管理）
 
 ### 基本コマンド
 ```bash

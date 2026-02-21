@@ -17,6 +17,9 @@
     "automerge": true,
     "labels": ["dependencies", "automerge: enabled"]
   },
+  "nix": {
+    "enabled": true
+  },
   "packageRules": [
     {
       "matchPackageNames": "@opennextjs/*",
@@ -25,6 +28,12 @@
     {
       "matchPackageNames": ["/^textlint/", "@textlint/*"],
       "groupName": "textlint packages"
+    },
+    {
+      "matchManagers": ["nix"],
+      "groupName": "nix flake inputs",
+      "automerge": true,
+      "labels": ["dependencies", "automerge: enabled"]
     }
   ]
 }
