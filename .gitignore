@@ -34,7 +34,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# nix
 .direnv
+result
+
 .pre-commit-config.yaml
 
 .dev.vars*

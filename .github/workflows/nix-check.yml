@@ -1,0 +1,25 @@
+name: nix flake check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  flake-check:
+    name: nix flake check (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: DeterminateSystems/nix-installer-action@v21
+      - uses: DeterminateSystems/magic-nix-cache-action@v13
+      - run: nix flake check
+      - run: nix develop --command node --version
+      - run: nix develop --command pnpm --version
