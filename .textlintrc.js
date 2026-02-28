@@ -15,5 +15,6 @@ module.exports = {
     },
     'preset-ja-spacing': true,
     'spellcheck-tech-word': true,
+    '@textlint-ja/preset-ai-writing': true,
   },
 };

@@ -30,6 +30,7 @@
     "@biomejs/biome": "2.4.4",
     "@next/bundle-analyzer": "16.1.6",
     "@tailwindcss/postcss": "4.2.1",
+    "@textlint-ja/textlint-rule-preset-ai-writing": "1.6.1",
     "@textlint/textlint-plugin-markdown": "15.5.2",
     "@types/hast": "3.0.4",
     "@types/markdown-it": "14.1.2",

@@ -20,7 +20,6 @@ tags:
 Chakra UIにおいても、v2.2.0から要素へのフォーカス時のスタイルにデフォルトで `focus-visible` を使うようになっています。
 
 <OgpCard url="https://github.com/chakra-ui/chakra-ui/pull/6153" />
-<OgpCard url="https://github.com/chakra-ui/chakra-ui/pull/6153" />
 
 本記事で紹介しているpolyfillも必要なくなったので、現在はこのブログにおいてもpolyfillを削除しています。
 
@@ -35,7 +34,7 @@ Chakra UIの `<Link>` コンポーネントはchakraによって拡張された�
 
 <OgpCard url="https://v2.chakra-ui.com/docs/components/link/usage" />
 
-Next.jsでのinternalなページ遷移で利用する場合は `next/link` と併用する必要があります。
+Next.jsでのinternalなページ遷移で利用する場合は `next/link` と併用します。
 以下のコードでは、internalなページのときのみ `next/link` で `<Link>` をラップし、外部のページのときは素の `<Link>` を使用する例です。
 
 ```tsx:MyLink.tsx

@@ -3,6 +3,10 @@
     "next-devtools": {
       "command": "npx",
       "args": ["-y", "next-devtools-mcp@latest"]
+    },
+    "textlint": {
+      "command": "npx",
+      "args": ["-y", "textlint", "--mcp"]
     }
   }
 }
