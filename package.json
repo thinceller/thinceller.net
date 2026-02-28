@@ -27,7 +27,7 @@
     "valibot": "1.2.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.3",
+    "@biomejs/biome": "2.4.4",
     "@next/bundle-analyzer": "16.1.6",
     "@tailwindcss/postcss": "4.2.0",
     "@textlint/textlint-plugin-markdown": "15.5.1",
