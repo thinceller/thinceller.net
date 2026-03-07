@@ -153,9 +153,9 @@ pnpm build:analyze
 - **Next.js 16.1.6** + App Router
 - **React 19.2.4** + React DOM 19.2.4
 - **MDX 3.1.1** + カスタム処理パイプライン
-- **Tailwind CSS 4.1.18** + カスタムタイポグラフィ
+- **Tailwind CSS 4.2.1** + カスタムタイポグラフィ
 - **Shiki 3.22.0** シンタックスハイライト（Night Owlテーマ）
-- **Biome 2.3.15** コード品質管理
+- **Biome 2.4.4** コード品質管理
 - **Vercel** ホスティング
 
 ### ディレクトリ構造
