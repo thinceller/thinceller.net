@@ -1,0 +1,92 @@
+---
+title: 自作のClaude Codeプラグインを作成した
+description: |
+  最近は仕事でもプライベートでもClaude Codeを使ったコーディングが主体になっています。公式プラグインを試すなかでその便利さを実感し、これまでdotfilesリポジトリで管理していたAgent Skillを整理してClaude Codeプラグインとして公開しました。この記事ではその背景と作成方法、公開した内容を紹介します。
+publishedTime: '2026-03-07T00:00:00Z'
+tags:
+  - Claude Code
+  - Agent Skills
+---
+
+最近は仕事でもプライベートでもClaude Codeを使ったコーディングが主体になっています。公式プラグインを試すなかでその便利さを実感し、これまでdotfilesリポジトリで管理していたAgent Skillを整理してClaude Codeプラグインとして公開しました。この記事ではその背景と作成方法、公開した内容を紹介します。
+
+<OgpCard url="https://github.com/thinceller/claude-plugins" />
+
+## プラグインにした背景
+
+[Agent Skills](https://agentskills.io/home)は、AIエージェントが手続き的な知識や特定のコンテキストをオンデマンドで読み込み、より高度なタスクを自動化できるようにする仕組みです。Claude Codeではユーザーレベル・プロジェクトレベルの個別のスキル、そしてプラグインという単位でスキルを管理できます。
+
+私はMacにインストールするアプリやClaude Codeの設定などは[dotfiles](https://github.com/thinceller/dotfiles)リポジトリで管理しています。当初、私はいくつかの汎用的なユーザーレベルのスキルをdotfilesリポジトリに置いて `~/.claude/skills` に展開していました。これ自体は問題ありませんでしたが、Anthropic公式のプラグインをいくつか試すうちに、関連するスキルやサブエージェントをひとまとまりにして管理・配布できる利点を感じました。
+
+また、dotfilesリポジトリに無造作に置くよりも独立したリポジトリとして公開することで、身近なチームメンバーにも共有しやすく、気軽に導入・試用してもらえるメリットもあります。
+
+上記の背景から、様々なプロジェクトで利用するスキルをClaude Codeプラグインとしてまとめることにしました。
+
+ちなみに、Claude CodeプラグインはClaude Codeでのみ利用可能なため、他のコーディングエージェントでも使いたい場合は別の配布の仕組みが必要です。私はClaude Codeのみを使用しており、直近はCodexやCursorを使う予定もないため、プラグイン形式を採用しました。
+
+## プラグインの作成方法
+
+プラグインを公開するにはプラグインマーケットプレイスの作成が必要です。具体的な手順や設定ファイルの書き方はClaude Codeの公式ドキュメントを参照してください。
+
+<OgpCard url="https://code.claude.com/docs/en/plugin-marketplaces" />
+
+冒頭のリポジトリにはマーケットプレイスを定義する`marketplace.json`と、各プラグインを定義する`plugin.json`がそれぞれ`.claude-plugin`ディレクトリに配置されています。
+
+```json:.claude-plugin/marketplace.json
+{
+  "name": "thinceller-claude-plugins",
+  "owner": {
+    "name": "thinceller",
+    "email": "thinceller@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "git-toolkit",
+      "source": "./plugins/git-toolkit"
+    }
+  ]
+}
+```
+
+```json:plugins/git-toolkit/.claude-plugin/plugin.json
+{
+  "name": "git-toolkit",
+  "description": "Streamlines git workflow with skills for committing staged changes with auto-generated messages and creating GitHub pull requests",
+  "version": "0.1.0",
+  "author": {
+    "name": "thinceller",
+    "email": "thinceller@gmail.com"
+  }
+}
+```
+
+上記を配置したリポジトリを公開することでClaude Codeにプラグインをインストールできるようになります。
+
+```txt
+# マーケットプレイスを追加
+/plugin marketplace add thinceller/claude-plugins
+
+# プラグインをインストール
+/plugin install git-toolkit@thinceller-claude-plugins
+```
+
+## 作成したプラグイン
+
+今回、`git-toolkit`というプラグインを作成しました。このプラグインは以下の2つのスキルを提供します。
+
+- `commit-staged-changes`
+- `create-pr`
+
+`commit-staged-changes`はステージングされた変更をコミットするためのスキルです。コードを編集しているとファイル変更数が多くなりがちで、Claude Codeの設定変更を試しながらコードを修正することもあります。手動でStagedへ追加したファイルに絞ってコミットしたい場面が多々あるので、一連の流れをスキル化した形です。
+
+`create-pr`はプルリクエストを作成するためのスキルです。必要なコンテキストを渡せばClaude CodeはうまくPRを作ってくれますが、リポジトリのテンプレートを無視したり、ドラフトにしてほしいのにオープン状態で作成したりすることがあります。こうした挙動を制御するため、テンプレートを尊重しつつArgumentsでPRの状態を指定できるようにしました。
+
+## 今後の展望
+
+普段よく行うGit操作は他にもあるので、折を見てスキル化していくつもりです。
+
+現状はGit操作に関するプラグインしかありませんが、たとえばAgent Teamsに関するスキルやコードレビュー支援など、特定の領域に特化したスキル・サブエージェント・MCP設定の追加も可能です。個人的に利用するツールは今後もプラグイン化していきたいと思っています。
+
+## まとめ
+
+普段dotfilesで管理していたスキルをClaude Codeプラグインとして整理し、独立したリポジトリで公開できました。プラグインという単位でスキルやサブエージェントをグルーピングすることで、管理しやすくなっただけでなく、チームメンバーへの共有もスムーズになりました。
