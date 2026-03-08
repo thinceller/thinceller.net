@@ -6,7 +6,7 @@ export const Footer: FC = () => {
     <footer className="border-t border-gray-200 dark:border-gray-800">
       <div className="flex flex-row justify-between mx-auto max-w-(--breakpoint-lg) p-6">
         <p className="text-gray-600 dark:text-gray-400">
-          &copy; {new Date().getFullYear()} thinceller
+          &copy; 2021-{new Date().getFullYear()} thinceller
         </p>
         <div className="flex flex-row gap-2">
           <a
