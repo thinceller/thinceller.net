@@ -131,7 +131,7 @@ publishedTime: "YYYY-MM-DDTHH:mm:ssZ"
 
 ### 機能確認
 1. `pnpm dev` で開発サーバー起動
-2. Playwright MCPを使用してブラウザテスト実行
+2. next-devtools MCPを使用してブラウザ動作確認
 3. 全ページの表示確認
 4. レスポンシブデザイン確認
 
@@ -152,10 +152,13 @@ pnpm build:analyze
 ### 技術スタック
 - **Next.js 16.1.6** + App Router
 - **React 19.2.4** + React DOM 19.2.4
+- **TypeScript 5.9.3** 厳密な型定義
+- **React Compiler** パフォーマンス最適化（`reactCompiler: true`）
 - **MDX 3.1.1** + カスタム処理パイプライン
 - **Tailwind CSS 4.2.1** + カスタムタイポグラフィ
 - **Shiki 3.23.0** シンタックスハイライト（Night Owlテーマ）
 - **Biome 2.4.6** コード品質管理
+- **valibot 1.2.0** データバリデーション（フロントマター検証）
 - **Vercel** ホスティング
 
 ### ディレクトリ構造
