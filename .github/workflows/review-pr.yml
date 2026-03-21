@@ -81,46 +81,35 @@ jobs:
             ### Step 4: Post inline comments
             For EVERY finding that references a specific file and line, post an inline comment using `mcp__github_inline_comment__create_inline_comment` with `confirmed: true`.
 
-            Format each inline comment as:
-            ```
-            **[<severity>]** <category>: <description>
+            Format each inline comment using Markdown:
+            ```markdown
+            **[<SEVERITY>]** _<category>_
+
+            <description（日本語で具体的に記載）>
             ```
 
             ### Step 5: Post review summary
-            Compose a review summary in the following format and submit via `gh pr review`:
+            Read the Markdown template file at `.github/review-templates/review-pr.md` and use it as the EXACT format for your review summary.
+            Fill in each section of the template with the results of your analysis. Do NOT submit plain text — the review MUST be formatted Markdown.
 
-            ```
-            ## 🔍 Code Review Summary
-
-            | Aspect | Result | Count |
-            |--------|--------|-------|
-            | Code Quality | ✅ or ⚠️ | N |
-            | Bug & Regression | ✅ or ⚠️ | N |
-            | Security | ✅ or ⚠️ | N |
-            | Performance | ✅ or ⚠️ | N |
-            | Consistency | ✅ or ⚠️ | N |
-            | Type Safety | ✅ or ⚠️ | N |
-
-            ### Findings
-            #### 🔴 High
-            - ...
-
-            #### 🟡 Medium
-            - ...
-
-            #### 🟢 Low
-            - ...
+            Write the filled-in review to a temporary file, then submit using `--body-file`:
+            ```bash
+            # 1. Write the review body to a temp file (using Write tool or bash redirection)
+            # 2. Submit the review
+            gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --comment --body-file /tmp/review-body.md
             ```
 
             Decide how to submit:
-            - If there are ANY high severity findings: `gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --request-changes --body "REVIEW_BODY"`
-            - Otherwise: `gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --comment --body "REVIEW_BODY"`
+            - If there are ANY high severity findings: Use `--request-changes`
+            - Otherwise: Use `--comment`
 
             Important:
+            - MUST read and follow the template in `.github/review-templates/review-pr.md`
+            - MUST write the review body to `/tmp/review-body.md` using the Write tool, then pass it via `--body-file`
             - Focus only on the changed lines and their immediate context
             - Do not flag issues that exist in unchanged code
             - Be specific and actionable in your feedback
             - Do not nitpick style issues that Biome would catch automatically
             - Write the review body and inline comments in Japanese
           claude_args: |
-            --allowedTools "Bash(gh pr review:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Grep,Glob,Agent,mcp__github_inline_comment__create_inline_comment"
+            --allowedTools "Bash(gh pr review:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Write,Grep,Glob,Agent,mcp__github_inline_comment__create_inline_comment"
