@@ -1,0 +1,126 @@
+name: Review Pull Request
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+
+jobs:
+  review-pr:
+    if: >-
+      github.actor != 'renovate[bot]' &&
+      github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Review pull request
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            You are a code reviewer. Review this pull request thoroughly using parallel subagents, then post a review summary and inline comments.
+
+            ## Instructions
+
+            ### Step 1: Gather context
+            - Run `gh pr view ${{ github.event.pull_request.number }} --repo ${{ github.repository }}` to understand the PR purpose
+            - Run `gh pr diff ${{ github.event.pull_request.number }} --repo ${{ github.repository }}` to get the full diff
+            - Read the changed files in full to understand the surrounding context
+
+            ### Step 2: Parallel review with subagents
+            Launch ALL 6 of the following review subagents in parallel using the Agent tool (send all 6 Agent tool calls in a single message):
+
+            **Subagent 1 - Code Quality:**
+            Review the diff for code quality issues: readability, naming conventions, complexity, DRY principle violations, dead code, and unnecessary abstractions. Return a structured list of findings with file path, line number, severity (high/medium/low), and description.
+
+            **Subagent 2 - Bug & Regression Detection:**
+            Review the diff for potential bugs and regressions: logic errors, off-by-one errors, null/undefined handling, edge cases, race conditions, and impact on existing functionality. Read related files to understand the broader context. Return a structured list of findings with file path, line number, severity, and description.
+
+            **Subagent 3 - Security:**
+            Review the diff for security issues: XSS vulnerabilities, injection attacks, sensitive data exposure, insecure configurations, and authentication/authorization issues. Return a structured list of findings with file path, line number, severity, and description.
+
+            **Subagent 4 - Performance:**
+            Review the diff for performance issues: unnecessary re-renders in React components, N+1 patterns, large bundle size impact, inefficient algorithms, missing memoization where needed, and unoptimized data fetching. Return a structured list of findings with file path, line number, severity, and description.
+
+            **Subagent 5 - Consistency:**
+            Review the diff for consistency with existing codebase patterns and conventions described in AGENTS.md: code style (Biome config: 80 char width, 2 space indent, single quotes, trailing commas, semicolons), component design patterns, file organization, and naming conventions. Return a structured list of findings with file path, line number, severity, and description.
+
+            **Subagent 6 - TypeScript Type Safety:**
+            Review the diff for TypeScript type safety issues: usage of `any` type, incorrect type assertions, missing type guards, loose typing where strict typing is possible, and incorrect generic usage. Return a structured list of findings with file path, line number, severity, and description.
+
+            Each subagent MUST return results in this exact format:
+            ```
+            CATEGORY: <category name>
+            FINDINGS:
+            - FILE: <file path> | LINE: <line number> | SEVERITY: <high/medium/low> | DESCRIPTION: <description>
+            - FILE: <file path> | LINE: <line number> | SEVERITY: <high/medium/low> | DESCRIPTION: <description>
+            SUMMARY: <one-line summary of overall assessment>
+            ```
+            If no issues are found, return:
+            ```
+            CATEGORY: <category name>
+            FINDINGS: none
+            SUMMARY: <one-line summary>
+            ```
+
+            ### Step 3: Integrate results and deduplicate
+            - Collect results from all 6 subagents
+            - Deduplicate: if the same file+line is flagged by multiple subagents, merge into one finding using the highest severity
+            - Group findings by severity (high → medium → low)
+
+            ### Step 4: Post inline comments
+            For EVERY finding that references a specific file and line, post an inline comment using `mcp__github_inline_comment__create_inline_comment` with `confirmed: true`.
+
+            Format each inline comment as:
+            ```
+            **[<severity>]** <category>: <description>
+            ```
+
+            ### Step 5: Post review summary
+            Compose a review summary in the following format and submit via `gh pr review`:
+
+            ```
+            ## 🔍 Code Review Summary
+
+            | Aspect | Result | Count |
+            |--------|--------|-------|
+            | Code Quality | ✅ or ⚠️ | N |
+            | Bug & Regression | ✅ or ⚠️ | N |
+            | Security | ✅ or ⚠️ | N |
+            | Performance | ✅ or ⚠️ | N |
+            | Consistency | ✅ or ⚠️ | N |
+            | Type Safety | ✅ or ⚠️ | N |
+
+            ### Findings
+            #### 🔴 High
+            - ...
+
+            #### 🟡 Medium
+            - ...
+
+            #### 🟢 Low
+            - ...
+            ```
+
+            Decide how to submit:
+            - If there are ANY high severity findings: `gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --request-changes --body "REVIEW_BODY"`
+            - Otherwise: `gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --comment --body "REVIEW_BODY"`
+
+            Important:
+            - Focus only on the changed lines and their immediate context
+            - Do not flag issues that exist in unchanged code
+            - Be specific and actionable in your feedback
+            - Do not nitpick style issues that Biome would catch automatically
+            - Write the review body and inline comments in Japanese
+          claude_args: |
+            --allowedTools "Bash(gh pr review:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Grep,Glob,Agent,mcp__github_inline_comment__create_inline_comment"
