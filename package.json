@@ -29,6 +29,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.8",
     "@next/bundle-analyzer": "16.1.7",
+    "@playwright/test": "1.58.2",
     "@tailwindcss/postcss": "4.2.2",
     "@textlint-ja/textlint-rule-preset-ai-writing": "1.6.1",
     "@textlint/textlint-plugin-markdown": "15.5.2",
@@ -56,7 +57,9 @@
     "lint": "biome check",
     "lint:post": "textlint _posts/**/*.mdx",
     "format": "biome check --write",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
