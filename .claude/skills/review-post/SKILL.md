@@ -33,7 +33,7 @@ Agent toolを使って4つのサブエージェントを**1回のメッセージ
 全サブエージェント共通:
 - `subagent_type`: `general-purpose`
 - リサーチ専任（ファイル編集は行わない旨をプロンプトに明記する）
-- スタイルガイドのパス: `{プロジェクトルート}/.claude/skills/blog-writing-style/references/writing-style-guide.md`
+- スタイルガイドのパス: `{プロジェクトルート}/.claude/skills/review-post/references/writing-style-guide.md`
 
 ### サブエージェント1: 文体・トーンチェッカー
 
