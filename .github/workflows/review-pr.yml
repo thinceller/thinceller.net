@@ -92,12 +92,11 @@ jobs:
             Read the Markdown template file at `.github/review-templates/review-pr.md` and use it as the EXACT format for your review summary.
             Fill in each section of the template with the results of your analysis. Do NOT submit plain text — the review MUST be formatted Markdown.
 
-            Use a heredoc to pass the body to `gh pr review` so that multi-line Markdown is preserved:
+            Write the filled-in review to a temporary file, then submit using `--body-file`:
             ```bash
-            gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --comment --body "$(cat <<'EOF'
-            <filled-in template here>
-            EOF
-            )"
+            # 1. Write the review body to a temp file (using Write tool or bash redirection)
+            # 2. Submit the review
+            gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --comment --body-file /tmp/review-body.md
             ```
 
             Decide how to submit:
@@ -106,11 +105,11 @@ jobs:
 
             Important:
             - MUST read and follow the template in `.github/review-templates/review-pr.md`
-            - MUST use a heredoc (cat <<'EOF' ... EOF) when passing the body to preserve Markdown formatting
+            - MUST write the review body to `/tmp/review-body.md` using the Write tool, then pass it via `--body-file`
             - Focus only on the changed lines and their immediate context
             - Do not flag issues that exist in unchanged code
             - Be specific and actionable in your feedback
             - Do not nitpick style issues that Biome would catch automatically
             - Write the review body and inline comments in Japanese
           claude_args: |
-            --allowedTools "Bash(gh pr review:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Grep,Glob,Agent,mcp__github_inline_comment__create_inline_comment"
+            --allowedTools "Bash(gh pr review:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Write,Grep,Glob,Agent,mcp__github_inline_comment__create_inline_comment"

@@ -54,12 +54,11 @@ jobs:
             Read the Markdown template file at `.github/review-templates/review-deps.md` and use it as the EXACT format for your review.
             Fill in each section of the template with the results of your analysis. Do NOT submit plain text — the review MUST be formatted Markdown.
 
-            Use a heredoc to pass the body to `gh pr review` so that multi-line Markdown is preserved:
+            Write the filled-in review to a temporary file, then submit using `--body-file`:
             ```bash
-            gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --approve --body "$(cat <<'EOF'
-            <filled-in template here>
-            EOF
-            )"
+            # 1. Write the review body to a temp file (using Write tool or bash redirection)
+            # 2. Submit the review
+            gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --approve --body-file /tmp/review-body.md
             ```
 
             Based on impact level:
@@ -69,10 +68,10 @@ jobs:
 
             Important:
             - MUST read and follow the template in `.github/review-templates/review-deps.md`
-            - MUST use a heredoc (cat <<'EOF' ... EOF) when passing the body to preserve Markdown formatting
+            - MUST write the review body to `/tmp/review-body.md` using the Write tool, then pass it via `--body-file`
             - Always provide specific evidence for your impact assessment
             - If you cannot find changelog information, note this and be conservative in your assessment
             - Consider how the package is actually used in this project when assessing impact
             - Write the review body in Japanese
           claude_args: |
-            --allowedTools "Bash(gh pr review:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Grep,Glob,WebSearch,WebFetch"
+            --allowedTools "Bash(gh pr review:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Write,Grep,Glob,WebSearch,WebFetch"
