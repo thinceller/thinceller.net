@@ -46,3 +46,9 @@ result
 
 .claude/settings.local.json
 CLAUDE.local.md
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
