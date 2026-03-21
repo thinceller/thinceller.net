@@ -4,6 +4,10 @@ on:
   pull_request:
     types: [opened, synchronize]
 
+concurrency:
+  group: review-deps-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   review-deps:
     if: github.actor == 'renovate[bot]'
@@ -19,6 +23,8 @@ jobs:
           fetch-depth: 1
 
       - name: Review dependency update
+        id: review
+        continue-on-error: true
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -75,3 +81,18 @@ jobs:
             - Write the review body in Japanese
           claude_args: |
             --allowedTools "Bash(gh pr review:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Write,Grep,Glob,WebSearch,WebFetch"
+
+      - name: Clean up previous review artifacts
+        if: steps.review.outcome == 'success'
+        continue-on-error: true
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const cleanup = require('./.github/scripts/cleanup-reviews.js');
+            await cleanup({
+              github,
+              context,
+              core,
+              summaryMarker: '📦 依存パッケージ更新レビュー',
+              resolveThreads: false,
+            });
