@@ -1,0 +1,87 @@
+name: Review Dependency Updates
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  review-deps:
+    if: github.actor == 'renovate[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Review dependency update
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: "renovate[bot]"
+          timeout_minutes: "30"
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            You are a dependency update reviewer. Analyze this Renovate PR and assess its impact on the project.
+
+            ## Instructions
+
+            ### Step 1: Gather information
+            - Run `gh pr view ${{ github.event.pull_request.number }} --repo ${{ github.repository }}` to get PR details
+            - Run `gh pr diff ${{ github.event.pull_request.number }} --repo ${{ github.repository }}` to get the diff
+            - Identify which packages are being updated and their version changes (old → new)
+            - Focus on `package.json` changes; ignore `pnpm-lock.yaml` details
+
+            ### Step 2: Research updates
+            - For each updated package, use WebSearch to find:
+              - The changelog or release notes for the new version
+              - Any breaking changes
+              - Any security advisories or fixes
+            - Read relevant source files in the repository to understand how the package is used
+
+            ### Step 3: Assess impact
+            Classify the overall impact as one of:
+            - **LOW**: Patch updates only, no breaking changes, no significant behavioral changes
+            - **MEDIUM**: Minor updates with some API changes, or changes that might affect build/runtime behavior
+            - **HIGH**: Major updates, breaking changes, security fixes that require attention, or changes to critical dependencies
+
+            ### Step 4: Submit review
+            Format your review as follows and submit it using `gh pr review`:
+
+            ```
+            ## 📦 Dependency Update Review
+
+            ### Updated packages
+            | Package | Change | Type |
+            |---------|--------|------|
+            | package-name | x.y.z → a.b.c | patch/minor/major |
+
+            ### Impact: 🟢 LOW / 🟡 MEDIUM / 🔴 HIGH
+
+            ### Findings
+            - Breaking changes: (yes/no, details)
+            - Security fixes: (yes/no, details)
+            - Notable changes: (summary)
+            - Usage in this project: (how the package is used and whether changes affect it)
+
+            ### Verdict: ✅ Auto-approved / ℹ️ Informational / ⚠️ Manual review required
+            ```
+
+            Based on impact level:
+            - **LOW**: Run `gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --approve --body "REVIEW_BODY"`
+            - **MEDIUM**: Run `gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --comment --body "REVIEW_BODY"`
+            - **HIGH**: Run `gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --request-changes --body "REVIEW_BODY"`
+
+            Important:
+            - Always provide specific evidence for your impact assessment
+            - If you cannot find changelog information, note this and be conservative in your assessment
+            - Consider how the package is actually used in this project when assessing impact
+            - Write the review body in Japanese
+          claude_args: |
+            --allowedTools "Bash(gh pr review:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Grep,Glob,WebSearch,WebFetch"
