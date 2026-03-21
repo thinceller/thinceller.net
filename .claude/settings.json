@@ -1,4 +1,24 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(pnpm install:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm format)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm preview:*)",
+      "Bash(pnpm list:*)",
+      "Bash(pnpm start)",
+      "Bash(pnpm outdated:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr diff:*)",
+      "mcp__next-devtools__init",
+      "mcp__next-devtools__nextjs_docs",
+      "mcp__next-devtools__upgrade_nextjs_16"
+    ]
+  },
   "hooks": {
     "SessionStart": [
       {
