@@ -81,42 +81,32 @@ jobs:
             ### Step 4: Post inline comments
             For EVERY finding that references a specific file and line, post an inline comment using `mcp__github_inline_comment__create_inline_comment` with `confirmed: true`.
 
-            Format each inline comment as:
-            ```
-            **[<severity>]** <category>: <description>
+            Format each inline comment using Markdown:
+            ```markdown
+            **[<SEVERITY>]** _<category>_
+
+            <description（日本語で具体的に記載）>
             ```
 
             ### Step 5: Post review summary
-            Compose a review summary in the following format and submit via `gh pr review`:
+            Read the Markdown template file at `.github/review-templates/review-pr.md` and use it as the EXACT format for your review summary.
+            Fill in each section of the template with the results of your analysis. Do NOT submit plain text — the review MUST be formatted Markdown.
 
-            ```
-            ## 🔍 Code Review Summary
-
-            | Aspect | Result | Count |
-            |--------|--------|-------|
-            | Code Quality | ✅ or ⚠️ | N |
-            | Bug & Regression | ✅ or ⚠️ | N |
-            | Security | ✅ or ⚠️ | N |
-            | Performance | ✅ or ⚠️ | N |
-            | Consistency | ✅ or ⚠️ | N |
-            | Type Safety | ✅ or ⚠️ | N |
-
-            ### Findings
-            #### 🔴 High
-            - ...
-
-            #### 🟡 Medium
-            - ...
-
-            #### 🟢 Low
-            - ...
+            Use a heredoc to pass the body to `gh pr review` so that multi-line Markdown is preserved:
+            ```bash
+            gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --comment --body "$(cat <<'EOF'
+            <filled-in template here>
+            EOF
+            )"
             ```
 
             Decide how to submit:
-            - If there are ANY high severity findings: `gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --request-changes --body "REVIEW_BODY"`
-            - Otherwise: `gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --comment --body "REVIEW_BODY"`
+            - If there are ANY high severity findings: Use `--request-changes`
+            - Otherwise: Use `--comment`
 
             Important:
+            - MUST read and follow the template in `.github/review-templates/review-pr.md`
+            - MUST use a heredoc (cat <<'EOF' ... EOF) when passing the body to preserve Markdown formatting
             - Focus only on the changed lines and their immediate context
             - Do not flag issues that exist in unchanged code
             - Be specific and actionable in your feedback
