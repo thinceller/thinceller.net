@@ -1,7 +1,31 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { expect, test } from '@playwright/test';
 
-// 最新記事のslug（_posts/ディレクトリの中でpublishedTimeが最新のもの）
-const LATEST_POST_SLUG = '2026-03-07-creating-claude-code-plugin';
+/**
+ * _posts/ディレクトリを走査し、publishedTimeが最新の記事slugを返す。
+ * 新記事追加時もテストが自動的に最新記事を対象とする。
+ */
+function getLatestPostSlug(): string {
+  const postsDir = path.join(process.cwd(), '_posts');
+  const files = fs.readdirSync(postsDir).filter((f) => f.endsWith('.mdx'));
+
+  const posts = files.map((file) => {
+    const content = fs.readFileSync(path.join(postsDir, file), 'utf8');
+    const match = content.match(/publishedTime:\s*["']?([^"'\n]+)["']?/);
+    return {
+      slug: file.replace(/\.mdx$/, ''),
+      publishedTime: match?.[1] ?? '',
+    };
+  });
+
+  posts.sort((a, b) => (a.publishedTime > b.publishedTime ? -1 : 1));
+  const slug = posts[0]?.slug;
+  if (!slug) throw new Error('No posts found in _posts directory');
+  return slug;
+}
+
+const latestPostSlug = getLatestPostSlug();
 
 test.describe('ページ表示確認', () => {
   test('トップページ（/）が正常に表示される', async ({ page }) => {
@@ -26,7 +50,7 @@ test.describe('ページ表示確認', () => {
   });
 
   test('記事詳細ページが本文を表示する', async ({ page }) => {
-    const response = await page.goto(`/blog/${LATEST_POST_SLUG}`);
+    const response = await page.goto(`/blog/${latestPostSlug}`);
     expect(response?.status()).toBe(200);
     // 記事本文のarticle要素（最初の要素がメインコンテンツ）
     await expect(page.getByRole('article').first()).toBeVisible();
