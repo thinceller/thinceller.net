@@ -78,7 +78,7 @@ export default async function Page(props: Props) {
         url: AVATAR_URL,
       },
     },
-    image: `${BLOG_URL}/blog/${params.slug}/opengraph-image.png`,
+    image: `${BLOG_URL}/blog/${params.slug}/opengraph-image`,
     url: `${BLOG_URL}/blog/${params.slug}`,
     keywords: frontmatter.tags?.join(', '),
   };
