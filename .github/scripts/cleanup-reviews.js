@@ -13,7 +13,7 @@
  * @param {typeof import('@actions/core')} params.core
  * @param {string} params.summaryMarker - Marker string to identify bot summary reviews
  * @param {boolean} params.resolveThreads - Whether to resolve outdated inline threads
- * @param {string} [params.botLogin='github-actions[bot]'] - Bot login name
+ * @param {string} [params.botLogin='claude[bot]'] - Bot login name
  */
 module.exports = async ({
   github,
@@ -21,7 +21,7 @@ module.exports = async ({
   core,
   summaryMarker,
   resolveThreads,
-  botLogin = 'github-actions[bot]',
+  botLogin = 'claude[bot]',
 }) => {
   const { owner, repo } = context.repo;
   const prNumber = context.issue.number;
