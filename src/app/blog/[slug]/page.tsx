@@ -6,13 +6,7 @@ import { PostFooter } from '@/components/PostFooter';
 import { PostTitle } from '@/components/PostTitle';
 import { RelatedPosts } from '@/components/RelatedPosts';
 import { TableOfContents } from '@/components/TableOfContents';
-import {
-  AVATAR_URL,
-  BLOG_AUTHOR,
-  BLOG_NAME,
-  BLOG_URL,
-  SITE_NAME,
-} from '@/lib/constants';
+import { AVATAR_URL, BLOG_AUTHOR, BLOG_URL, SITE_NAME } from '@/lib/constants';
 import { getPostBySlug } from '@/lib/mdx';
 import { getAllPosts, getRelatedPosts } from '@/lib/post';
 
@@ -45,14 +39,6 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
       title: frontmatter.title,
       description: frontmatter.description,
       siteName: SITE_NAME,
-      images: [
-        {
-          url: `/blog/${params.slug}/opengraph-image.png`,
-          alt: BLOG_NAME,
-          width: 1200,
-          height: 630,
-        },
-      ],
       publishedTime: frontmatter.publishedTime,
       modifiedTime: frontmatter.modifiedTime,
       authors: [BLOG_AUTHOR],
@@ -61,14 +47,6 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     twitter: {
       title: frontmatter.title,
       description: frontmatter.description,
-      images: [
-        {
-          url: `/blog/${params.slug}/opengraph-image.png`,
-          alt: BLOG_NAME,
-          width: 1200,
-          height: 630,
-        },
-      ],
     },
   };
 }
