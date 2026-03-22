@@ -38,6 +38,7 @@ const getFontRegular = async () => {
 // 以前は opengraph-image.png/route.tsx (Route Handler) を使用していたが、
 // Next.js 16.2.0 でルート解決に失敗するようになったため標準のファイルコンベンションに移行。
 // Vercel環境でのfs経由のmdxファイルアクセスも動作確認済み。
+// 無効なslugへの保護は親の page.tsx の dynamicParams = false により提供される。
 export default async function Image({
   params,
 }: {
