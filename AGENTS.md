@@ -93,7 +93,7 @@ publishedTime: "YYYY-MM-DDTHH:mm:ssZ"
 2. コードブロックには言語を指定
 3. 画像は `public/images/` に配置
 4. 内部リンクは相対パス使用
-5. OGP画像は自動生成（Route Handler経由）
+5. OGP画像は自動生成（opengraph-image.tsx ファイルコンベンション）
 6. Mermaid.jsダイアグラムは ```mermaid``` コードブロックで記述（自動描画・テーマ連動）
 
 ## コンポーネント設計
@@ -167,8 +167,7 @@ src/
 │   ├── blog/                         # ブログ機能
 │   │   ├── [slug]/
 │   │   │   ├── page.tsx              # 記事詳細ページ
-│   │   │   └── opengraph-image.png/
-│   │   │       └── route.tsx         # 記事個別OGP画像生成
+│   │   │   └── opengraph-image.tsx    # 記事個別OGP画像生成
 │   │   ├── tags/                     # タグ機能
 │   │   │   ├── [tag]/
 │   │   │   │   └── page.tsx          # タグ別記事一覧
