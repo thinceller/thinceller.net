@@ -4,7 +4,7 @@ import { ImageResponse } from 'next/og';
 import { BLOG_NAME } from '@/lib/constants';
 import { getPostBySlug } from '@/lib/post';
 
-export const alt = 'thinceller blog';
+export const alt = BLOG_NAME;
 export const size = {
   width: 1200,
   height: 630,
@@ -35,6 +35,9 @@ const getFontRegular = async () => {
   return Uint8Array.from(res).buffer;
 };
 
+// 以前は opengraph-image.png/route.tsx (Route Handler) を使用していたが、
+// Next.js 16.2.0 でルート解決に失敗するようになったため標準のファイルコンベンションに移行。
+// Vercel環境でのfs経由のmdxファイルアクセスも動作確認済み。
 export default async function Image({
   params,
 }: {
