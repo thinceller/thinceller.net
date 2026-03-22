@@ -64,13 +64,10 @@ jobs:
             ```bash
             # 1. Write the review body to a temp file (using Write tool or bash redirection)
             # 2. Submit the review
-            gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --approve --body-file /tmp/review-body.md
+            gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --comment --body-file /tmp/review-body.md
             ```
 
-            Based on impact level:
-            - **LOW**: Use `--approve`
-            - **MEDIUM**: Use `--comment`
-            - **HIGH**: Use `--request-changes`
+            Always use `--comment`. Do NOT use `--approve` or `--request-changes`.
 
             Important:
             - MUST read and follow the template in `.github/review-templates/review-deps.md`
