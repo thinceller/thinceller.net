@@ -11,6 +11,9 @@ export const size = {
 };
 export const contentType = 'image/png';
 
+// parent の page.tsx の dynamicParams = false を継承するが、明示的に宣言して保護を強化
+export const dynamicParams = false;
+
 const getAvatar = async () => {
   const res = await readFile(
     join(process.cwd(), 'public', 'images', 'avatar.jpg'),
