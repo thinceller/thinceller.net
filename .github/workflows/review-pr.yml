@@ -38,6 +38,12 @@ jobs:
 
             ## Instructions
 
+            ### Scope Constraint (CRITICAL)
+            - You MUST only report findings on lines that appear in the PR diff (added or modified lines).
+            - You may read surrounding code for context, but every finding MUST reference a line changed in this PR.
+            - If a line was not touched by this PR, do NOT flag it — even if it has issues.
+            - This rule applies to you AND to every subagent you launch.
+
             ### Step 1: Gather context
             - Run `gh pr view ${{ github.event.pull_request.number }} --repo ${{ github.repository }}` to understand the PR purpose
             - Run `gh pr diff ${{ github.event.pull_request.number }} --repo ${{ github.repository }}` to get the full diff
@@ -47,21 +53,27 @@ jobs:
             Launch ALL 6 of the following review subagents in parallel using the Agent tool (send all 6 Agent tool calls in a single message):
 
             **Subagent 1 - Code Quality:**
+            SCOPE: Only flag issues on lines added or modified in the PR diff. Read surrounding code for context but MUST NOT report findings on unchanged lines.
             Review the diff for code quality issues: readability, naming conventions, complexity, DRY principle violations, dead code, and unnecessary abstractions. Return a structured list of findings with file path, line number, severity (high/medium/low), and description.
 
             **Subagent 2 - Bug & Regression Detection:**
-            Review the diff for potential bugs and regressions: logic errors, off-by-one errors, null/undefined handling, edge cases, race conditions, and impact on existing functionality. Read related files to understand the broader context. Return a structured list of findings with file path, line number, severity, and description.
+            SCOPE: Only flag issues on lines added or modified in the PR diff. You may read related files for context, but MUST NOT report findings on unchanged lines.
+            Review the diff for potential bugs and regressions: logic errors, off-by-one errors, null/undefined handling, edge cases, race conditions, and impact on existing functionality. Return a structured list of findings with file path, line number, severity, and description.
 
             **Subagent 3 - Security:**
+            SCOPE: Only flag issues on lines added or modified in the PR diff. Read surrounding code for context but MUST NOT report findings on unchanged lines.
             Review the diff for security issues: XSS vulnerabilities, injection attacks, sensitive data exposure, insecure configurations, and authentication/authorization issues. Return a structured list of findings with file path, line number, severity, and description.
 
             **Subagent 4 - Performance:**
+            SCOPE: Only flag issues on lines added or modified in the PR diff. Read surrounding code for context but MUST NOT report findings on unchanged lines.
             Review the diff for performance issues: unnecessary re-renders in React components, N+1 patterns, large bundle size impact, inefficient algorithms, missing memoization where needed, and unoptimized data fetching. Return a structured list of findings with file path, line number, severity, and description.
 
             **Subagent 5 - Consistency:**
+            SCOPE: Only flag issues on lines added or modified in the PR diff. Read surrounding code for context but MUST NOT report findings on unchanged lines.
             Review the diff for consistency with existing codebase patterns and conventions described in AGENTS.md: code style (Biome config: 80 char width, 2 space indent, single quotes, trailing commas, semicolons), component design patterns, file organization, and naming conventions. Return a structured list of findings with file path, line number, severity, and description.
 
             **Subagent 6 - TypeScript Type Safety:**
+            SCOPE: Only flag issues on lines added or modified in the PR diff. Read surrounding code for context but MUST NOT report findings on unchanged lines.
             Review the diff for TypeScript type safety issues: usage of `any` type, incorrect type assertions, missing type guards, loose typing where strict typing is possible, and incorrect generic usage. Return a structured list of findings with file path, line number, severity, and description.
 
             Each subagent MUST return results in this exact format:
@@ -79,10 +91,13 @@ jobs:
             SUMMARY: <one-line summary>
             ```
 
-            ### Step 3: Integrate results and deduplicate
+            ### Step 3: Integrate results, deduplicate, and classify
             - Collect results from all 6 subagents
             - Deduplicate: if the same file+line is flagged by multiple subagents, merge into one finding using the highest severity
             - Group findings by severity (high → medium → low)
+            - Classify findings into two tiers:
+              - **Inline tier** (HIGH severity only): these will become inline PR review comments
+              - **Summary-only tier** (MEDIUM and LOW severity): these appear only in the review summary body, not as inline comments
 
             ### Step 4: Build review payload and submit in a single API call
             Submit BOTH inline comments and the review summary in a single API call using `gh api`.
@@ -91,9 +106,14 @@ jobs:
             #### 4a: Prepare the review summary body
             Read the Markdown template file at `.github/review-templates/review-pr.md` and use it as the EXACT format for your review summary.
             Fill in each section of the template with the results of your analysis. Do NOT submit plain text — the review MUST be formatted Markdown.
+            - HIGH findings are listed directly under the 🔴 High heading (always visible)
+            - MEDIUM findings go inside the `<details>` block under 🟡 Medium
+            - LOW findings go inside the `<details>` block under 🟢 Low
+            - Include the count in each `<summary>` tag (e.g., "🟡 Medium（3件）")
 
             #### 4b: Prepare inline comments array
-            For EVERY finding that references a specific file and line, create a comment object.
+            Only create inline comment objects for HIGH severity findings.
+            MEDIUM and LOW severity findings MUST NOT be included in the comments array — they appear only in the review summary (step 4a).
             Format each inline comment body using Markdown:
             ```markdown
             **[<SEVERITY>]** _<category>_
@@ -139,8 +159,8 @@ jobs:
             - MUST use the Write tool to write the JSON payload to `/tmp/review-payload.json`, then pass it via `--input`
             - MUST read and follow the template in `.github/review-templates/review-pr.md` for the review body
             - The `line` field refers to the line number in the file (not diff position). Use `side: "RIGHT"` for lines in the new version of the file.
-            - Focus only on the changed lines and their immediate context
-            - Do not flag issues that exist in unchanged code
+            - CRITICAL: Every finding MUST reference a line that was added or modified in the PR diff. Do not flag issues in unchanged code.
+            - CRITICAL: Only HIGH severity findings get inline comments. MEDIUM and LOW go in the summary body only.
             - Be specific and actionable in your feedback
             - Do not nitpick style issues that Biome would catch automatically
             - Write the review body and inline comments in Japanese

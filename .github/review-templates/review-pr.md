@@ -10,13 +10,26 @@
 | 型安全性 | ✅ or ⚠️ | N |
 
 ### 指摘事項
+
 #### 🔴 High
 - **`file/path.ts:L123`** — 説明（カテゴリ: ○○）
 
-#### 🟡 Medium
+（該当なしの場合は「なし」と記載）
+
+<details>
+<summary>🟡 Medium（N件）</summary>
+
 - **`file/path.ts:L456`** — 説明（カテゴリ: ○○）
 
-#### 🟢 Low
+（該当なしの場合は「なし」と記載）
+
+</details>
+
+<details>
+<summary>🟢 Low（N件）</summary>
+
 - **`file/path.ts:L789`** — 説明（カテゴリ: ○○）
 
 （該当なしの場合は「なし」と記載）
+
+</details>
