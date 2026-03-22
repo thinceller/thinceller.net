@@ -15,7 +15,7 @@
     "gray-matter": "4.0.3",
     "lucide-react": "0.577.0",
     "mermaid": "11.13.0",
-    "next": "16.1.7",
+    "next": "16.2.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-twitter-widgets": "1.11.0",
@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.8",
-    "@next/bundle-analyzer": "16.1.7",
+    "@next/bundle-analyzer": "16.2.0",
     "@playwright/test": "1.58.2",
     "@tailwindcss/postcss": "4.2.2",
     "@textlint-ja/textlint-rule-preset-ai-writing": "1.6.1",
