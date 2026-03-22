@@ -1,27 +1,15 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { ImageResponse } from 'next/og';
-import type { NextRequest } from 'next/server';
 import { BLOG_NAME } from '@/lib/constants';
-import { getAllPosts, getPostBySlug } from '@/lib/post';
+import { getPostBySlug } from '@/lib/post';
 
-// export const alt = 'thinceller blog';
-// export const size = {
-//   width: 1200,
-//   height: 630,
-// };
-// export const contentType = 'image/png';
-
-// opengraph-image.tsxを使うと、Vercelの環境ではgetPostBySlug内でmdxファイルにアクセスできない。
-// そのため、Route Handlerを使ってビルド時に必要なOGP画像を作成する。
-export const dynamicParams = false;
-export function generateStaticParams() {
-  const posts = getAllPosts();
-
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
-}
+export const alt = BLOG_NAME;
+export const size = {
+  width: 1200,
+  height: 630,
+};
+export const contentType = 'image/png';
 
 const getAvatar = async () => {
   const res = await readFile(
@@ -47,15 +35,20 @@ const getFontRegular = async () => {
   return Uint8Array.from(res).buffer;
 };
 
-export async function GET(
-  _req: NextRequest,
-  props: { params: Promise<{ slug: string }> },
-) {
-  const params = await props.params;
-  const post = getPostBySlug(params.slug);
+// 以前は opengraph-image.png/route.tsx (Route Handler) を使用していたが、
+// Next.js 16.2.0 でルート解決に失敗するようになったため標準のファイルコンベンションに移行。
+// Vercel環境でのfs経由のmdxファイルアクセスも動作確認済み。
+// 無効なslugへの保護は親の page.tsx の dynamicParams = false により提供される。
+export default async function Image({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
   const logoSrc = await getAvatar();
 
-  /* biome-ignore format: ignoring ts error and lint error */
+  /* biome-ignore format: JSX in ImageResponse requires relaxed formatting */
   return new ImageResponse(
     <div
       style={{
