@@ -4,7 +4,6 @@
  * Clean up previous review artifacts on a pull request.
  *
  * - Resolve outdated inline review threads (when resolveThreads is true)
- * - Dismiss old bot reviews (clears request-changes status)
  * - Minimize old bot summary reviews as OUTDATED
  *
  * @param {object} params
@@ -13,7 +12,7 @@
  * @param {typeof import('@actions/core')} params.core
  * @param {string} params.summaryMarker - Marker string to identify bot summary reviews
  * @param {boolean} params.resolveThreads - Whether to resolve outdated inline threads
- * @param {string} [params.botLogin='github-actions[bot]'] - Bot login name
+ * @param {string} [params.botLogin='claude[bot]'] - Bot login name
  */
 module.exports = async ({
   github,
@@ -21,7 +20,7 @@ module.exports = async ({
   core,
   summaryMarker,
   resolveThreads,
-  botLogin = 'github-actions[bot]',
+  botLogin = 'claude[bot]',
 }) => {
   const { owner, repo } = context.repo;
   const prNumber = context.issue.number;
@@ -83,7 +82,7 @@ module.exports = async ({
     }
   }
 
-  // Part B: Dismiss + minimize old bot summary reviews
+  // Part B: Minimize old bot summary reviews
   const { data: reviews } = await github.rest.pulls.listReviews({
     owner,
     repo,
@@ -106,34 +105,6 @@ module.exports = async ({
   core.info(`Processing ${oldSummaries.length} old summary reviews`);
 
   for (const review of oldSummaries) {
-    // Step 1: Dismiss (clears request-changes status)
-    try {
-      await github.graphql(
-        `
-        mutation ($id: ID!, $message: String!) {
-          dismissPullRequestReview(
-            input: {
-              pullRequestReviewId: $id
-              message: $message
-            }
-          ) {
-            pullRequestReview {
-              state
-            }
-          }
-        }
-      `,
-        {
-          id: review.node_id,
-          message:
-            '新しいレビューが投稿されたため、前回のレビューをdismissしました',
-        },
-      );
-    } catch (error) {
-      core.warning(`Failed to dismiss review ${review.id}: ${error.message}`);
-    }
-
-    // Step 2: Minimize as OUTDATED
     try {
       await github.graphql(
         `
