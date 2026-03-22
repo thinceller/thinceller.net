@@ -47,7 +47,7 @@ export default async function Image({
   const post = getPostBySlug(slug);
   const logoSrc = await getAvatar();
 
-  /* biome-ignore format: ignoring ts error and lint error */
+  /* biome-ignore format: JSX in ImageResponse requires relaxed formatting */
   return new ImageResponse(
     <div
       style={{
