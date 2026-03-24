@@ -9,3 +9,7 @@ export const OG_IMAGE_URL = 'https://thinceller-blog-og-image.vercel.app';
 export const AUTHOR_TWITTER = 'https://twitter.com/thinceller_dev';
 export const AUTHOR_GITHUB = 'https://github.com/thinceller';
 export const AVATAR_URL = `${BLOG_URL}/images/avatar.jpg`;
+
+// Zenn
+export const ZENN_USERNAME = 'thinceller';
+export const ZENN_PROFILE_URL = `https://zenn.dev/${ZENN_USERNAME}`;
