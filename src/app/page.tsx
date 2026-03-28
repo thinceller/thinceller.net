@@ -1,16 +1,30 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import Image from 'next/image';
 import type { WebSite, WithContext } from 'schema-dts';
 
 import { JsonLd } from '@/components/JsonLd';
-import { BLOG_AUTHOR, BLOG_URL, SITE_NAME } from '@/lib/constants';
+import { PostCard } from '@/components/PostCard';
+import { SectionHeading } from '@/components/SectionHeading';
+import { ZennArticleCard } from '@/components/ZennArticleCard';
+import {
+  BLOG_AUTHOR,
+  BLOG_URL,
+  SITE_NAME,
+  ZENN_PROFILE_URL,
+} from '@/lib/constants';
+import { getAllPosts } from '@/lib/post';
+import { getLatestZennArticles } from '@/lib/zenn';
+import AvatarImage from '../../public/images/avatar.jpg';
 
 export const metadata: Metadata = {
   title: SITE_NAME,
   description: 'thinceller の個人サイト',
 };
 
-export default function Page() {
+export default async function Page() {
+  const recentPosts = getAllPosts().slice(0, 5);
+  const zennArticles = await getLatestZennArticles(5);
+
   const jsonLd: WithContext<WebSite> = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
@@ -26,28 +40,68 @@ export default function Page() {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
-        <div className="text-center space-y-4">
-          <h1 className="text-custom-3xl font-bold">Welcome to {SITE_NAME}</h1>
-          <p className="text-custom-lg text-gray-600 dark:text-gray-400">
-            ソフトウェアエンジニアthincellerの個人サイトです
-          </p>
-        </div>
+      <div className="flex flex-col space-y-12">
+        {/* Hero */}
+        <section className="flex items-center gap-5 pt-4">
+          <Image
+            src={AvatarImage}
+            alt="thinceller's avatar"
+            width={80}
+            height={80}
+            className="rounded-full shrink-0"
+            priority
+          />
+          <div>
+            <h1 className="text-custom-2xl font-bold">thinceller</h1>
+            <p className="text-custom-base text-gray-600 dark:text-gray-400 mt-1">
+              ソフトウェアエンジニア
+            </p>
+          </div>
+        </section>
 
-        <div className="flex gap-6">
-          <Link
-            href="/about"
-            className="min-w-32 px-6 py-3 text-custom-base font-medium text-center text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg hover:border-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-          >
-            About
-          </Link>
-          <Link
-            href="/blog"
-            className="min-w-32 px-6 py-3 text-custom-base font-medium text-center text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-          >
-            Blog
-          </Link>
-        </div>
+        {/* Recent Blog Posts */}
+        <section>
+          <SectionHeading
+            title="Recent Posts"
+            linkHref="/blog"
+            linkText="すべての記事を見る →"
+          />
+          <div className="grid gap-3">
+            {recentPosts.map((post) => (
+              <PostCard
+                key={post.slug}
+                slug={post.slug}
+                title={post.title}
+                publishedTime={post.publishedTime}
+                titleLevel="h3"
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Zenn Articles */}
+        {zennArticles.length > 0 && (
+          <section>
+            <SectionHeading
+              title="Zenn Articles"
+              linkHref={ZENN_PROFILE_URL}
+              linkText="Zennで全記事を見る →"
+              external
+            />
+            <div className="grid gap-3">
+              {zennArticles.map((article) => (
+                <ZennArticleCard
+                  key={article.id}
+                  title={article.title}
+                  emoji={article.emoji}
+                  publishedAt={article.published_at}
+                  path={article.path}
+                  likedCount={article.liked_count}
+                />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </>
   );
