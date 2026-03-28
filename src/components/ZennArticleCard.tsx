@@ -1,19 +1,23 @@
 import { ExternalLink, Heart } from 'lucide-react';
 import { DateFormatter } from '@/components/DateFormatter';
-import type { ZennArticle } from '@/lib/zenn';
 
-type Props = Pick<
-  ZennArticle,
-  'title' | 'emoji' | 'published_at' | 'path' | 'liked_count'
->;
+type Props = {
+  title: string;
+  emoji: string;
+  publishedAt: string;
+  path: string;
+  likedCount: number;
+};
 
 export function ZennArticleCard({
   title,
   emoji,
-  published_at,
+  publishedAt,
   path,
-  liked_count,
+  likedCount,
 }: Props) {
+  const href = path.startsWith('/') ? `https://zenn.dev${path}` : undefined;
+
   return (
     <article className="relative bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-md p-4 hover:shadow-md transition-shadow">
       <div className="flex items-start gap-3">
@@ -22,23 +26,27 @@ export function ZennArticleCard({
         </span>
         <div className="min-w-0 flex-1">
           <h3 className="text-base font-semibold mb-1">
-            <a
-              href={`https://zenn.dev${path}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-sm"
-            >
-              {title}
-              <span className="absolute inset-0" aria-hidden="true" />
-            </a>
+            {href ? (
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-sm"
+              >
+                {title}
+                <span className="absolute inset-0" aria-hidden="true" />
+              </a>
+            ) : (
+              <span className="text-gray-900 dark:text-gray-100">{title}</span>
+            )}
           </h3>
           <div className="flex items-center gap-3 text-custom-sm text-gray-500 dark:text-gray-400">
-            <DateFormatter date={published_at} />
+            <DateFormatter date={publishedAt} />
             <span className="inline-flex items-center gap-1">
               <Heart size={14} />
-              {liked_count}
+              {likedCount}
             </span>
-            <ExternalLink size={14} className="ml-auto" />
+            <ExternalLink size={14} className="ml-auto" aria-hidden="true" />
           </div>
         </div>
       </div>

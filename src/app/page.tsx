@@ -49,7 +49,7 @@ export default async function Page() {
             width={80}
             height={80}
             className="rounded-full shrink-0"
-            loading="eager"
+            priority
           />
           <div>
             <h1 className="text-custom-2xl font-bold">thinceller</h1>
@@ -94,9 +94,9 @@ export default async function Page() {
                   key={article.id}
                   title={article.title}
                   emoji={article.emoji}
-                  published_at={article.published_at}
+                  publishedAt={article.published_at}
                   path={article.path}
-                  liked_count={article.liked_count}
+                  likedCount={article.liked_count}
                 />
               ))}
             </div>
