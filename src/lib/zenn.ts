@@ -24,7 +24,7 @@ export async function getLatestZennArticles(limit = 5): Promise<ZennArticle[]> {
       return [];
     }
     const data: ZennApiResponse = await res.json();
-    return data.articles.slice(0, limit);
+    return data.articles?.slice(0, limit) ?? [];
   } catch {
     return [];
   }
