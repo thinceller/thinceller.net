@@ -16,6 +16,18 @@ ADRs are a way to record the rationale behind architectural decisions made on a 
 pnpm new:adr
 ```
 
+## ADRs in this project
+
+- [ADR-0001](2023-04-16-use-adr.md) - Use ADR (Architectural Decision Records)
+- [ADR-0002](2025-12-20-migrate-to-biome.md) - Migrate to Biome for Code Quality Tooling
+- [ADR-0003](2025-12-30-scroll-linked-table-of-contents.md) - Implement Scroll-Linked Table of Contents
+- [ADR-0004](2026-01-09-use-schema-dts-for-json-ld.md) - Use schema-dts for JSON-LD Structured Data
+- [ADR-0005](2026-01-09-unify-frontmatter-date-field.md) - Unify Article Frontmatter Date Field to publishedTime
+- [ADR-0006](2026-02-15-mermaid-client-side-rendering.md) - Use Client-Side Rendering for Mermaid.js Diagrams
+- [ADR-0007](2026-03-21-introduce-playwright-e2e-testing.md) - Introduce Playwright for E2E Testing
+- [ADR-0008](2026-03-21-automated-pr-review-with-claude.md) - Automated PR Review with Claude Code Actions
+- [ADR-0009](2026-03-22-upgrade-shiki-to-v4.md) - Upgrade Shiki to v4
+
 ## References
 
 - [Michael Nygard's article on ADRs](http://thinkrelevance.com/blog/2011/11/15/documenting-architecture-decisions)
