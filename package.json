@@ -38,7 +38,7 @@
     "@types/react": "19.2.14",
     "babel-plugin-react-compiler": "1.0.0",
     "postcss": "8.5.8",
-    "schema-dts": "1.1.5",
+    "schema-dts": "2.0.0",
     "tailwindcss": "4.2.2",
     "textlint": "15.5.2",
     "textlint-rule-preset-ja-spacing": "2.4.3",
