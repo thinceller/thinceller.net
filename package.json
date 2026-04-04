@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.10",
-    "@playwright/test": "1.59.0",
+    "@playwright/test": "1.59.1",
     "@tailwindcss/postcss": "4.2.2",
     "@textlint-ja/textlint-rule-preset-ai-writing": "1.6.1",
     "@textlint/textlint-plugin-markdown": "15.5.2",
