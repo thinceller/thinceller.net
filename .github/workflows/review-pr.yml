@@ -70,7 +70,7 @@ jobs:
 
             **Subagent 5 - Consistency:**
             SCOPE: Only flag issues on lines added or modified in the PR diff. Read surrounding code for context but MUST NOT report findings on unchanged lines.
-            Review the diff for consistency with existing codebase patterns and conventions described in AGENTS.md: code style (Biome config: 80 char width, 2 space indent, single quotes, trailing commas, semicolons), component design patterns, file organization, and naming conventions. Return a structured list of findings with file path, line number, severity, and description.
+            Review the diff for consistency with existing codebase patterns and conventions described in CLAUDE.md: code style (Biome config: 80 char width, 2 space indent, single quotes, trailing commas, semicolons), component design patterns, file organization, and naming conventions. Return a structured list of findings with file path, line number, severity, and description.
 
             **Subagent 6 - TypeScript Type Safety:**
             SCOPE: Only flag issues on lines added or modified in the PR diff. Read surrounding code for context but MUST NOT report findings on unchanged lines.
