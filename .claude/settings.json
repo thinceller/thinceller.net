@@ -30,6 +30,17 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | { read -r f; pnpm biome check --write --files-ignore-unknown=true \"$f\"; } 2>/dev/null || true"
+          }
+        ]
+      }
     ]
   }
 }

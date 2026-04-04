@@ -1,0 +1,99 @@
+name: Weekly CLAUDE.md Update
+
+on:
+  schedule:
+    # 毎週月曜日の午前9時(JST)に実行（UTC 0:00）
+    - cron: "0 0 * * 1"
+  workflow_dispatch: # 手動トリガーも可能にする
+
+jobs:
+  update-claude-md:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # 完全な履歴を取得（探索に必要）
+
+      - name: Check for existing PR
+        id: check-pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          EXISTING_PR=$(gh pr list --head "claude/update-claude-md" --state open --json number,url --jq '.[0] // empty')
+          if [ -n "$EXISTING_PR" ]; then
+            PR_NUMBER=$(echo "$EXISTING_PR" | jq -r '.number')
+            PR_URL=$(echo "$EXISTING_PR" | jq -r '.url')
+            echo "pr_exists=true" >> "$GITHUB_OUTPUT"
+            echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+            echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
+          else
+            echo "pr_exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run Claude to update CLAUDE.md
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          timeout_minutes: "60"
+          prompt: |
+            REPOSITORY: ${{ github.repository }}
+            BRANCH: main
+            EXISTING_PR: ${{ steps.check-pr.outputs.pr_exists }}
+            EXISTING_PR_NUMBER: ${{ steps.check-pr.outputs.pr_number }}
+
+            ## タスク
+            CLAUDE.mdファイルを最新のプロジェクト状態に更新してください。
+
+            ## CLAUDE.mdのベストプラクティス（厳守）
+            - **200行以下を目標にする** — 長いほどClaudeの遵守率が下がる
+            - 各行のリトマステスト: **「この行を消したらClaudeが間違えるか？」** Noなら削除
+            - **含めるべき**: Claudeが推測できない非標準コマンド、デフォルトと異なるコードスタイル、gotcha、ブログ記事のフロントマター規約、Git規約
+            - **含めないこと**: コンポーネント一覧、ディレクトリ構造、技術スタックのバージョン詳細、標準的な慣習、トラブルシューティング、SEO/アクセシビリティの汎用的な方針
+            - バージョン番号は package.json から読み取れるので CLAUDE.md に含めない
+            - 既存の構造とフォーマットを維持する
+
+            ## 探索項目
+            1. **依存関係**: package.json のバージョン情報（コマンド変更の有無）
+            2. **設定ファイル**: biome.json, next.config.ts 等（コードスタイルルール変更の有無）
+            3. **スクリプト**: package.json のscriptsセクション（コマンド変更・追加の有無）
+            4. **ブログ記事**: _posts/ のフロントマター規約変更の有無
+
+            ## 実行ルール
+            - CLAUDE.mdの内容を現在のプロジェクト状態と比較してください
+            - **変更が必要ない場合**:
+              - EXISTING_PRが"true"の場合: PR #${{ steps.check-pr.outputs.pr_number }} はもう不要です。`gh pr close ${{ steps.check-pr.outputs.pr_number }} --comment "CLAUDE.mdは最新の状態のため、このPRをクローズします。"` を実行してクローズしてください。
+              - EXISTING_PRが"false"の場合: 何もせず終了してください（コミット不要）
+            - **変更がある場合**:
+              1. CLAUDE.mdファイルを更新
+              2. 変更内容を確認
+              3. ブランチ名は固定で `claude/update-claude-md` を使用してください
+              4. mainブランチから `claude/update-claude-md` ブランチを作成（既にローカルに存在する場合は削除してから再作成）:
+                 ```
+                 git checkout main
+                 git branch -D claude/update-claude-md 2>/dev/null || true
+                 git checkout -b claude/update-claude-md
+                 ```
+              5. 変更をコミット（コミットメッセージ: "docs: update CLAUDE.md with latest project configuration"）
+              6. ブランチをpush（`git push --force-with-lease origin claude/update-claude-md`）
+              7. EXISTING_PRが"true"の場合:
+                 - PRは既に存在するため、新しいPRを作成しないでください
+                 - PR #${{ steps.check-pr.outputs.pr_number }} の説明を更新してください:
+                   `gh pr edit ${{ steps.check-pr.outputs.pr_number }} --body "変更された項目の具体的な概要"`
+              8. EXISTING_PRが"false"の場合:
+                 - 新しいPull Requestを作成してください
+                 - PRのタイトル: "docs: update CLAUDE.md with latest project configuration"
+                 - PRの説明: 変更された項目の具体的な概要を記載
+
+            ## 重要な注意事項
+            - 日本語の表現や技術用語を適切に保ってください
+            - プロジェクトの実態を正確に反映してください
+            - 変更がない場合はコミットを作成しないでください
+            - ブランチ名は必ず `claude/update-claude-md`（タイムスタンプなし）を使用してください
+          claude_args: |
+            --allowedTools Read,Glob,Grep,Edit,Write,Bash(git:*),Bash(gh pr:*),Bash(pnpm:*)
