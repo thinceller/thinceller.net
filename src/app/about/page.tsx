@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 
 import { JsonLd } from '@/components/JsonLd';
+import { BLOG_URL } from '@/lib/constants';
 import {
   createBreadcrumbList,
   createGraphJsonLd,
@@ -24,8 +25,8 @@ const jsonLd = createGraphJsonLd([
     description: 'thincellerについて',
   }),
   createBreadcrumbList('/about', [
-    { name: 'Home', url: 'https://thinceller.net' },
-    { name: 'About', url: 'https://thinceller.net/about' },
+    { name: 'Home', url: BLOG_URL },
+    { name: 'About', url: `${BLOG_URL}/about` },
   ]),
 ]);
 

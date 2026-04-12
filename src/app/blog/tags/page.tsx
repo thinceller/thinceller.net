@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { JsonLd } from '@/components/JsonLd';
-import { BLOG_NAME } from '@/lib/constants';
+import { BLOG_NAME, BLOG_URL } from '@/lib/constants';
 import { getAllTags } from '@/lib/post';
 import {
   createBreadcrumbList,
@@ -37,11 +37,11 @@ const jsonLd = createGraphJsonLd([
     description: 'すべてのタグの一覧',
   }),
   createBreadcrumbList('/blog/tags', [
-    { name: 'Home', url: 'https://thinceller.net' },
-    { name: 'Blog', url: 'https://thinceller.net/blog' },
+    { name: 'Home', url: BLOG_URL },
+    { name: 'Blog', url: `${BLOG_URL}/blog` },
     {
       name: 'タグ一覧',
-      url: 'https://thinceller.net/blog/tags',
+      url: `${BLOG_URL}/blog/tags`,
     },
   ]),
 ]);

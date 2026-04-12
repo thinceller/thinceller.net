@@ -5,7 +5,7 @@ import { JsonLd } from '@/components/JsonLd';
 import { PostCard } from '@/components/PostCard';
 import { SectionHeading } from '@/components/SectionHeading';
 import { ZennArticleCard } from '@/components/ZennArticleCard';
-import { SITE_NAME, ZENN_PROFILE_URL } from '@/lib/constants';
+import { BLOG_URL, SITE_NAME, ZENN_PROFILE_URL } from '@/lib/constants';
 import { getAllPosts } from '@/lib/post';
 import {
   createGraphJsonLd,
@@ -34,7 +34,7 @@ export default async function Page() {
         name: SITE_NAME,
         description: 'ソフトウェアエンジニアthincellerの個人サイトです',
       }),
-      about: { '@id': 'https://thinceller.net/#person' },
+      about: { '@id': `${BLOG_URL}/#person` },
     },
   ]);
 
