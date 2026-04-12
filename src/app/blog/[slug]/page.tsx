@@ -1,14 +1,21 @@
 import type { Metadata } from 'next';
-import type { BlogPosting, WithContext } from 'schema-dts';
 
 import { JsonLd } from '@/components/JsonLd';
 import { PostFooter } from '@/components/PostFooter';
 import { PostTitle } from '@/components/PostTitle';
 import { RelatedPosts } from '@/components/RelatedPosts';
 import { TableOfContents } from '@/components/TableOfContents';
-import { AVATAR_URL, BLOG_AUTHOR, BLOG_URL, SITE_NAME } from '@/lib/constants';
+import { BLOG_AUTHOR, BLOG_URL, SITE_NAME } from '@/lib/constants';
 import { getPostBySlug } from '@/lib/mdx';
 import { getAllPosts, getRelatedPosts } from '@/lib/post';
+import {
+  createBlogPostingEntity,
+  createBreadcrumbList,
+  createGraphJsonLd,
+  createPersonEntity,
+  createWebPageEntity,
+  createWebSiteEntity,
+} from '@/lib/structured-data';
 
 export const dynamicParams = false;
 
@@ -58,30 +65,33 @@ export default async function Page(props: Props) {
   // 関連記事を取得
   const relatedPosts = getRelatedPosts(frontmatter.tags || [], params.slug);
 
-  const jsonLd: WithContext<BlogPosting> = {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: frontmatter.title,
-    description: frontmatter.description,
-    datePublished: frontmatter.publishedTime,
-    dateModified: frontmatter.modifiedTime ?? frontmatter.publishedTime,
-    author: {
-      '@type': 'Person',
-      name: BLOG_AUTHOR,
-      url: `${BLOG_URL}/about`,
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: SITE_NAME,
-      logo: {
-        '@type': 'ImageObject',
-        url: AVATAR_URL,
+  const postPath = `/blog/${params.slug}`;
+  const jsonLd = createGraphJsonLd([
+    createWebSiteEntity(),
+    createPersonEntity(),
+    createWebPageEntity({
+      path: postPath,
+      name: frontmatter.title,
+      description: frontmatter.description,
+    }),
+    createBlogPostingEntity({
+      slug: params.slug,
+      title: frontmatter.title,
+      description: frontmatter.description,
+      publishedTime: frontmatter.publishedTime,
+      modifiedTime: frontmatter.modifiedTime,
+      tags: frontmatter.tags,
+      imageUrl: `${BLOG_URL}${postPath}/opengraph-image`,
+    }),
+    createBreadcrumbList(postPath, [
+      { name: 'Home', url: BLOG_URL },
+      { name: 'Blog', url: `${BLOG_URL}/blog` },
+      {
+        name: frontmatter.title,
+        url: `${BLOG_URL}${postPath}`,
       },
-    },
-    image: `${BLOG_URL}/blog/${params.slug}/opengraph-image`,
-    url: `${BLOG_URL}/blog/${params.slug}`,
-    keywords: frontmatter.tags?.join(', '),
-  };
+    ]),
+  ]);
 
   return (
     <>

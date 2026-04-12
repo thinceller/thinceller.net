@@ -1,33 +1,34 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import type { ProfilePage, WithContext } from 'schema-dts';
 
 import { JsonLd } from '@/components/JsonLd';
+import { BLOG_URL } from '@/lib/constants';
 import {
-  AUTHOR_GITHUB,
-  AUTHOR_TWITTER,
-  AVATAR_URL,
-  BLOG_AUTHOR,
-  BLOG_AUTHOR_FULL_NAME,
-} from '@/lib/constants';
+  createBreadcrumbList,
+  createGraphJsonLd,
+  createPersonEntity,
+  createProfilePageEntity,
+  createWebSiteEntity,
+} from '@/lib/structured-data';
 import AvatarImage from '../../../public/images/avatar.jpg';
 
 export const metadata: Metadata = {
   title: 'About',
 };
 
-const jsonLd: WithContext<ProfilePage> = {
-  '@context': 'https://schema.org',
-  '@type': 'ProfilePage',
-  mainEntity: {
-    '@type': 'Person',
-    name: BLOG_AUTHOR,
-    alternateName: BLOG_AUTHOR_FULL_NAME,
-    description: 'ソフトウェアエンジニア',
-    image: AVATAR_URL,
-    sameAs: [AUTHOR_TWITTER, AUTHOR_GITHUB],
-  },
-};
+const jsonLd = createGraphJsonLd([
+  createWebSiteEntity(),
+  createPersonEntity(),
+  createProfilePageEntity({
+    path: '/about',
+    name: 'About',
+    description: 'thincellerについて',
+  }),
+  createBreadcrumbList('/about', [
+    { name: 'Home', url: BLOG_URL },
+    { name: 'About', url: `${BLOG_URL}/about` },
+  ]),
+]);
 
 export default function Page() {
   return (

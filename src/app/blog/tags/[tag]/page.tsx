@@ -1,10 +1,16 @@
 import type { Metadata } from 'next';
-import type { CollectionPage, WithContext } from 'schema-dts';
 
 import { JsonLd } from '@/components/JsonLd';
 import { PostCard } from '@/components/PostCard';
 import { BLOG_NAME, BLOG_URL } from '@/lib/constants';
 import { getAllTags, getPostsByTag } from '@/lib/post';
+import {
+  createBreadcrumbList,
+  createCollectionPageEntity,
+  createGraphJsonLd,
+  createPersonEntity,
+  createWebSiteEntity,
+} from '@/lib/structured-data';
 
 export const dynamicParams = false;
 
@@ -48,17 +54,31 @@ export default async function Page(props: Props) {
   const tag = decodeURIComponent(params.tag);
   const posts = getPostsByTag(tag);
 
-  const jsonLd: WithContext<CollectionPage> = {
-    '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    name: `${tag} | ${BLOG_NAME}`,
-    description: `${tag}に関する記事一覧`,
-    url: `${BLOG_URL}/blog/tags/${params.tag}`,
-    about: {
-      '@type': 'Thing',
-      name: tag,
+  const tagPath = `/blog/tags/${params.tag}`;
+  const jsonLd = createGraphJsonLd([
+    createWebSiteEntity(),
+    createPersonEntity(),
+    {
+      ...createCollectionPageEntity({
+        path: tagPath,
+        name: `${tag} | ${BLOG_NAME}`,
+        description: `${tag}に関する記事一覧`,
+      }),
+      about: {
+        '@type': 'Thing' as const,
+        name: tag,
+      },
     },
-  };
+    createBreadcrumbList(tagPath, [
+      { name: 'Home', url: BLOG_URL },
+      { name: 'Blog', url: `${BLOG_URL}/blog` },
+      {
+        name: 'タグ一覧',
+        url: `${BLOG_URL}/blog/tags`,
+      },
+      { name: tag, url: `${BLOG_URL}${tagPath}` },
+    ]),
+  ]);
 
   return (
     <>
