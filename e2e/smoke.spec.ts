@@ -154,12 +154,15 @@ test.describe('構造化データ（JSON-LD）', () => {
     const person = data['@graph'].find(
       (e: { '@type': string }) => e['@type'] === 'Person',
     );
+    expect(blogPosting).toBeDefined();
+    expect(person).toBeDefined();
     expect(blogPosting.author['@id']).toBe(person['@id']);
 
     // BreadcrumbList に3つのアイテムがあること (Home > Blog > Post)
     const breadcrumb = data['@graph'].find(
       (e: { '@type': string }) => e['@type'] === 'BreadcrumbList',
     );
+    expect(breadcrumb).toBeDefined();
     expect(breadcrumb.itemListElement).toHaveLength(3);
   });
 
@@ -184,6 +187,8 @@ test.describe('構造化データ（JSON-LD）', () => {
     const person = data['@graph'].find(
       (e: { '@type': string }) => e['@type'] === 'Person',
     );
+    expect(profilePage).toBeDefined();
+    expect(person).toBeDefined();
     expect(profilePage.mainEntity['@id']).toBe(person['@id']);
   });
 

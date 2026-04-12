@@ -33,6 +33,7 @@ export default async function Page() {
         path: '',
         name: SITE_NAME,
         description: 'ソフトウェアエンジニアthincellerの個人サイトです',
+        hasBreadcrumb: false,
       }),
       about: { '@id': `${BLOG_URL}/#person` },
     },

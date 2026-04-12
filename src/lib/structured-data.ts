@@ -50,6 +50,7 @@ type WebPageOptions = {
   path: string;
   name: string;
   description: string;
+  hasBreadcrumb?: boolean;
 };
 
 export function createWebPageEntity(options: WebPageOptions): WebPage {
@@ -62,7 +63,9 @@ export function createWebPageEntity(options: WebPageOptions): WebPage {
     url,
     isPartOf: { '@id': `${BLOG_URL}/#website` },
     inLanguage: 'ja',
-    breadcrumb: { '@id': `${url}#breadcrumb` },
+    ...(options.hasBreadcrumb !== false
+      ? { breadcrumb: { '@id': `${url}#breadcrumb` } }
+      : {}),
   };
 }
 
