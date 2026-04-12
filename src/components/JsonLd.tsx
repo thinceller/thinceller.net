@@ -1,10 +1,10 @@
-import type { Thing, WithContext } from 'schema-dts';
+import type { Graph, Thing, WithContext } from 'schema-dts';
 
-type JsonLdProps<T extends Thing> = {
-  data: WithContext<T>;
+type JsonLdProps = {
+  data: WithContext<Thing> | Graph;
 };
 
-export function JsonLd<T extends Thing>({ data }: JsonLdProps<T>) {
+export function JsonLd({ data }: JsonLdProps) {
   return (
     <script
       type="application/ld+json"

@@ -1,10 +1,16 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import type { CollectionPage, WithContext } from 'schema-dts';
 
 import { JsonLd } from '@/components/JsonLd';
-import { BLOG_NAME, BLOG_URL } from '@/lib/constants';
+import { BLOG_NAME } from '@/lib/constants';
 import { getAllTags } from '@/lib/post';
+import {
+  createBreadcrumbList,
+  createCollectionPageEntity,
+  createGraphJsonLd,
+  createPersonEntity,
+  createWebSiteEntity,
+} from '@/lib/structured-data';
 
 export const metadata: Metadata = {
   title: 'タグ一覧',
@@ -22,13 +28,23 @@ export const metadata: Metadata = {
   },
 };
 
-const jsonLd: WithContext<CollectionPage> = {
-  '@context': 'https://schema.org',
-  '@type': 'CollectionPage',
-  name: 'タグ一覧',
-  description: 'すべてのタグの一覧',
-  url: `${BLOG_URL}/blog/tags`,
-};
+const jsonLd = createGraphJsonLd([
+  createWebSiteEntity(),
+  createPersonEntity(),
+  createCollectionPageEntity({
+    path: '/blog/tags',
+    name: 'タグ一覧',
+    description: 'すべてのタグの一覧',
+  }),
+  createBreadcrumbList('/blog/tags', [
+    { name: 'Home', url: 'https://thinceller.net' },
+    { name: 'Blog', url: 'https://thinceller.net/blog' },
+    {
+      name: 'タグ一覧',
+      url: 'https://thinceller.net/blog/tags',
+    },
+  ]),
+]);
 
 export default function Page() {
   const allTags = getAllTags();
