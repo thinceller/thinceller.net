@@ -81,7 +81,9 @@ export function createCollectionPageEntity(
     url,
     isPartOf: { '@id': `${BLOG_URL}/#website` },
     inLanguage: 'ja',
-    breadcrumb: { '@id': `${url}#breadcrumb` },
+    ...(options.hasBreadcrumb !== false
+      ? { breadcrumb: { '@id': `${url}#breadcrumb` } }
+      : {}),
   };
 }
 
@@ -96,7 +98,9 @@ export function createProfilePageEntity(options: WebPageOptions): ProfilePage {
     isPartOf: { '@id': `${BLOG_URL}/#website` },
     inLanguage: 'ja',
     mainEntity: { '@id': `${BLOG_URL}/#person` },
-    breadcrumb: { '@id': `${url}#breadcrumb` },
+    ...(options.hasBreadcrumb !== false
+      ? { breadcrumb: { '@id': `${url}#breadcrumb` } }
+      : {}),
   };
 }
 
@@ -148,7 +152,7 @@ export function createBlogPostingEntity(
     publisher: { '@id': `${BLOG_URL}/#person` },
     image: options.imageUrl,
     url,
-    keywords: options.tags?.join(', '),
+    keywords: options.tags?.length ? options.tags.join(', ') : undefined,
     mainEntityOfPage: { '@id': `${url}#webpage` },
     isPartOf: { '@id': `${BLOG_URL}/#website` },
     inLanguage: 'ja',
