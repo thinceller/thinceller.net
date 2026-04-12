@@ -26,7 +26,6 @@ pnpm new:adr
 - [ADR-0006](2026-02-15-mermaid-client-side-rendering.md) - Use Client-Side Rendering for Mermaid.js Diagrams
 - [ADR-0007](2026-03-21-introduce-playwright-e2e-testing.md) - Introduce Playwright for E2E Testing
 - [ADR-0008](2026-03-21-automated-pr-review-with-claude.md) - Automated PR Review with Claude Code Actions
-- [ADR-0009](2026-03-22-upgrade-shiki-to-v4.md) - Upgrade Shiki to v4
 
 ## References
 
