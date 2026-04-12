@@ -112,11 +112,13 @@ test.describe('構造化データ（JSON-LD）', () => {
     const website = data['@graph'].find(
       (e: { '@type': string }) => e['@type'] === 'WebSite',
     );
+    expect(website).toBeDefined();
     expect(website['@id']).toContain('#website');
 
     const person = data['@graph'].find(
       (e: { '@type': string }) => e['@type'] === 'Person',
     );
+    expect(person).toBeDefined();
     expect(person['@id']).toContain('#person');
   });
 
@@ -209,6 +211,7 @@ test.describe('構造化データ（JSON-LD）', () => {
     const breadcrumb = data['@graph'].find(
       (e: { '@type': string }) => e['@type'] === 'BreadcrumbList',
     );
+    expect(breadcrumb).toBeDefined();
     expect(breadcrumb.itemListElement).toHaveLength(2);
   });
 });
