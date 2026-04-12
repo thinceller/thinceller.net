@@ -17,13 +17,6 @@ accepted
 
 **スクロール連動型の目次機能**を実装する。
 
-### 実装アプローチ
-
-1. **見出し抽出**: MDX処理パイプラインのrehypeプラグイン (`rehypeExtractHeadings`) で見出し情報を自動抽出
-2. **目次コンポーネント**: `TableOfContents` クライアントコンポーネントを作成
-3. **スクロール検出**: Intersection Observer APIで現在表示中のセクションを検出
-4. **アクティブ表示**: 表示中のセクションに対応する目次項目をハイライト
-
 ### Considered Options
 
 **1. スクロール連動型（採用）**
@@ -42,6 +35,13 @@ accepted
 - **標準的なパターン**: 他の技術ブログプラットフォームと同等の機能
 - **自動化**: 見出しを書くだけで目次が自動生成される
 - **パフォーマンス**: Intersection Observer APIは効率的
+
+### 実装アプローチ
+
+1. **見出し抽出**: MDX処理パイプラインのrehypeプラグイン (`rehypeExtractHeadings`) で見出し情報を自動抽出
+2. **目次コンポーネント**: `TableOfContents` クライアントコンポーネントを作成
+3. **スクロール検出**: Intersection Observer APIで現在表示中のセクションを検出
+4. **アクティブ表示**: 表示中のセクションに対応する目次項目をハイライト
 
 ## Consequences
 

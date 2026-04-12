@@ -39,8 +39,9 @@ Mermaid.jsダイアグラムは **クライアントサイドレンダリング*
 - Next.js App Router / RSCとの互換性が高い
 
 デメリット：
-- mermaidライブラリが大きい（minified後で約4MB）
+- mermaidライブラリが大きい（minified後で約3MB）
 - 初回表示時にローディング状態が発生
+- 動的importでも、ダイアグラム含むページへの初回訪問時には全チャンクが読み込まれる
 
 **2. ビルドタイムレンダリング（不採用）**
 - `rehype-mermaid` + Playwrightでビルド時にSVG生成
@@ -67,6 +68,7 @@ Mermaid.jsダイアグラムは **クライアントサイドレンダリング*
 - テーマ切り替え時にダイアグラムが自動的に再描画される
 - Vercelでの安定したデプロイ（追加のビルド依存なし）
 - 既存のThemeContext/ThemeToggleとシームレスに統合
+- セキュリティ: ブログ記事は著者のみが編集するため、Mermaid記法の信頼性は担保されている
 
 **より困難になったこと:**
 - 初回表示時のCLS（Cumulative Layout Shift）対策が必要
