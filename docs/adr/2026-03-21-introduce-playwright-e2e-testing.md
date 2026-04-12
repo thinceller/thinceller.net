@@ -25,7 +25,7 @@ accepted
 - **テストポート**: 3001（開発サーバーの3000と分離）
 - **テストスイート**:
   - スモークテスト: 主要ページの表示確認（/, /about, /blog, /blog/[slug]）
-  - RSSフィード検証: rss.xml, atom.xmlの妥当性確認
+  - RSSフィード検証: /blog/rss.xml, /blog/atom.xmlの妥当性確認
   - ナビゲーションテスト: ページ間遷移の動作確認
 - **CI統合**: GitHub Actionsでプルリクエスト時に自動実行
 
