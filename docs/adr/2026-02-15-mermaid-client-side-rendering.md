@@ -14,7 +14,7 @@ accepted
 - サイトのパフォーマンスへの影響を最小化
 - Vercelデプロイ環境での安定性
 
-参考: `docs/mermaid-implementation-plan.md`
+参考: [Mermaid実装計画](../mermaid-implementation-plan.md)
 
 ## Decision
 
@@ -39,7 +39,7 @@ Mermaid.jsダイアグラムは **クライアントサイドレンダリング*
 - Next.js App Router / RSCとの互換性が高い
 
 デメリット：
-- mermaidライブラリが大きい（~2MB+ minified）
+- mermaidライブラリが大きい（minified後で約4MB）
 - 初回表示時にローディング状態が発生
 
 **2. ビルドタイムレンダリング（不採用）**

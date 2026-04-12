@@ -15,7 +15,7 @@ JSON-LD構造化データ実装にあたり、以下の課題が顕在化：
 
 ## Decision
 
-記事の日付フィールドを **`publishedTime`** / **`modifiedTime`** に統一する。
+記事の日付フィールドを **`publishedTime`**（必須） / **`modifiedTime`**（オプション） に統一する。
 
 両フィールドともISO 8601形式（`YYYY-MM-DDTHH:mm:ssZ`）で記述する。
 
