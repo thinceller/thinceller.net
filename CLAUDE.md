@@ -20,6 +20,8 @@ pnpm lint         # Biome lint
 pnpm format       # Biome format
 pnpm typecheck    # 型チェック ※事前にpnpm buildが必要
 pnpm lint:post    # 日本語記事のtextlint
+pnpm test:e2e     # Playwright E2Eテスト（ビルド→起動→テスト）
+pnpm test:e2e:ui  # Playwright UIモードでE2Eテスト
 ```
 
 コード変更後は必ず実行: `pnpm lint && pnpm format && pnpm typecheck`
