@@ -82,7 +82,7 @@ jobs:
       - name: Clean up previous review artifacts
         if: steps.review.outcome == 'success'
         continue-on-error: true
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const cleanup = require('./.github/scripts/cleanup-reviews.js');
