@@ -30,7 +30,7 @@
     "@biomejs/biome": "2.4.15",
     "@playwright/test": "1.60.0",
     "@tailwindcss/postcss": "4.3.0",
-    "@textlint-ja/textlint-rule-preset-ai-writing": "1.6.3",
+    "@textlint-ja/textlint-rule-preset-ai-writing": "1.7.0",
     "@textlint/textlint-plugin-markdown": "15.6.1",
     "@types/hast": "3.0.4",
     "@types/mdx": "2.0.13",
