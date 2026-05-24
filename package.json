@@ -37,7 +37,7 @@
     "@types/node": "24.12.4",
     "@types/react": "19.2.15",
     "babel-plugin-react-compiler": "1.0.0",
-    "postcss": "8.5.14",
+    "postcss": "8.5.15",
     "schema-dts": "2.0.0",
     "tailwindcss": "4.3.0",
     "textlint": "15.6.1",
