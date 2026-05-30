@@ -10,7 +10,7 @@
     "@shikijs/themes": "4.0.2",
     "@vercel/analytics": "2.0.1",
     "@vercel/speed-insights": "2.0.0",
-    "dayjs": "1.11.20",
+    "dayjs": "1.11.21",
     "feed": "5.2.1",
     "gray-matter": "4.0.3",
     "lucide-react": "0.577.0",
