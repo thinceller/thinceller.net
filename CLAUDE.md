@@ -25,7 +25,7 @@ pnpm test:e2e:ui  # Playwright UIモードでE2Eテスト
 ```
 
 コード変更後は必ず実行: `pnpm lint && pnpm format && pnpm typecheck`
-バンドルサイズ予算: `pnpm build:analyze` で確認（358KB基準、20%増で警告）
+バンドルサイズ確認: `pnpm build:analyze`
 
 ## コードスタイル
 
