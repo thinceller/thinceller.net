@@ -24,7 +24,7 @@ jobs:
           version=$(node -e "const pkg=require('./package.json'); console.log(pkg.devDependencies['@playwright/test'])")
           echo "version=$version" >> "$GITHUB_OUTPUT"
       - name: Cache Playwright browsers
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
