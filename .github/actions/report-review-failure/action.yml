@@ -1,0 +1,85 @@
+name: Report review failure
+description: レビュー step の実質的な失敗を判定し、失敗時は issue を作成/更新、回復時はクローズする
+
+inputs:
+  workflow-name:
+    description: issue body に記載する workflow 名
+    required: true
+  review-outcome:
+    description: レビュー step の outcome
+    required: true
+  execution-file:
+    description: claude-code-action の execution_file output
+    required: false
+    default: ''
+  pr-number:
+    description: PR 番号
+    required: true
+  github-token:
+    description: issue 操作用トークン
+    required: true
+
+outputs:
+  errored:
+    description: レビューが実質的に失敗していたか
+    value: ${{ steps.report.outputs.errored }}
+
+runs:
+  using: composite
+  steps:
+    - id: report
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        WORKFLOW_NAME: ${{ inputs.workflow-name }}
+        REVIEW_OUTCOME: ${{ inputs.review-outcome }}
+        EXECUTION_FILE: ${{ inputs.execution-file }}
+        PR_NUMBER: ${{ inputs.pr-number }}
+        REPO: ${{ github.repository }}
+        RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        ISSUE_TITLE: Claude 自動レビューが失敗しています
+      run: |
+        errored=false
+        error_detail=""
+        if [ "$REVIEW_OUTCOME" = 'failure' ]; then
+          errored=true
+        elif [ -z "$EXECUTION_FILE" ] || [ ! -f "$EXECUTION_FILE" ]; then
+          errored=true
+          error_detail="execution_file not found"
+        elif jq -e '.[] | select(.type == "result" and .is_error == true)' "$EXECUTION_FILE" > /dev/null; then
+          errored=true
+          error_detail=$(jq -r '[.[] | select(.type == "result") | .result // empty] | join("\n")' "$EXECUTION_FILE" | head -c 500)
+        fi
+        echo "errored=$errored" >> "$GITHUB_OUTPUT"
+        issue_number=$(gh issue list --repo "$REPO" --state open \
+          --search "in:title \"$ISSUE_TITLE\"" \
+          --json number,title \
+          --jq ".[] | select(.title == \"$ISSUE_TITLE\") | .number" | head -n 1)
+        if [ "$errored" = "true" ]; then
+          echo "::warning::Automated review failed (review step outcome: $REVIEW_OUTCOME)"
+          {
+            echo "Claude 自動レビューが失敗しています。"
+            echo ""
+            echo "- workflow: $WORKFLOW_NAME"
+            echo "- 失敗した run: $RUN_URL"
+            echo "- PR: #$PR_NUMBER"
+            if [ -n "$error_detail" ]; then
+              echo ""
+              echo '```'
+              echo "$error_detail"
+              echo '```'
+            fi
+            echo ""
+            echo "最終更新: $(date -u)"
+          } > /tmp/review-failure-issue.md
+          if [ -n "$issue_number" ]; then
+            gh issue edit "$issue_number" --repo "$REPO" \
+              --body-file /tmp/review-failure-issue.md
+          else
+            gh issue create --repo "$REPO" --title "$ISSUE_TITLE" \
+              --body-file /tmp/review-failure-issue.md
+          fi
+        elif [ -n "$issue_number" ]; then
+          gh issue close "$issue_number" --repo "$REPO" \
+            --comment "自動レビューが回復しました: $RUN_URL"
+        fi
