@@ -15,6 +15,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      issues: write
       id-token: write
     steps:
       - name: Checkout repository
@@ -79,8 +80,21 @@ jobs:
           claude_args: |
             --allowedTools "Bash(gh pr review:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Write,Grep,Glob,WebSearch,WebFetch"
 
+      - name: Report review failure
+        id: report
+        continue-on-error: true
+        uses: ./.github/actions/report-review-failure
+        with:
+          workflow-name: review-deps
+          review-outcome: ${{ steps.review.outcome }}
+          execution-file: ${{ steps.review.outputs.execution_file }}
+          pr-number: ${{ github.event.pull_request.number }}
+          github-token: ${{ github.token }}
+
       - name: Clean up previous review artifacts
-        if: steps.review.outcome == 'success'
+        if: >-
+          steps.review.outcome == 'success' &&
+          steps.report.outputs.errored != 'true'
         continue-on-error: true
         uses: actions/github-script@v9
         with:
