@@ -17,6 +17,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      issues: write
       id-token: write
     steps:
       - name: Checkout repository
@@ -30,6 +31,8 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: "claude"
+          show_full_output: true
           prompt: |
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
@@ -167,8 +170,67 @@ jobs:
           claude_args: |
             --allowedTools "Bash(gh api:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Write,Grep,Glob,Agent"
 
+      - name: Report review failure
+        id: report
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REVIEW_OUTCOME: ${{ steps.review.outcome }}
+          EXECUTION_FILE: ${{ steps.review.outputs.execution_file }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ISSUE_TITLE: Claude 自動レビューが失敗しています
+        run: |
+          errored=false
+          error_detail=""
+          if [ "$REVIEW_OUTCOME" = 'failure' ]; then
+            errored=true
+          elif [ -z "$EXECUTION_FILE" ] || [ ! -f "$EXECUTION_FILE" ]; then
+            errored=true
+            error_detail="execution_file not found"
+          elif jq -e '.[] | select(.type == "result" and .is_error == true)' "$EXECUTION_FILE" > /dev/null; then
+            errored=true
+            error_detail=$(jq -r '[.[] | select(.type == "result") | .result // empty] | join("\n")' "$EXECUTION_FILE" | head -c 500)
+          fi
+          echo "errored=$errored" >> "$GITHUB_OUTPUT"
+          issue_number=$(gh issue list --repo "$REPO" --state open \
+            --search "in:title \"$ISSUE_TITLE\"" \
+            --json number,title \
+            --jq ".[] | select(.title == \"$ISSUE_TITLE\") | .number" | head -n 1)
+          if [ "$errored" = "true" ]; then
+            echo "::warning::Automated review failed (review step outcome: $REVIEW_OUTCOME)"
+            {
+              echo "Claude 自動レビューが失敗しています。"
+              echo ""
+              echo "- workflow: review-pr"
+              echo "- 失敗した run: $RUN_URL"
+              echo "- PR: #$PR_NUMBER"
+              if [ -n "$error_detail" ]; then
+                echo ""
+                echo '```'
+                echo "$error_detail"
+                echo '```'
+              fi
+              echo ""
+              echo "最終更新: $(date -u)"
+            } > /tmp/review-failure-issue.md
+            if [ -n "$issue_number" ]; then
+              gh issue edit "$issue_number" --repo "$REPO" \
+                --body-file /tmp/review-failure-issue.md
+            else
+              gh issue create --repo "$REPO" --title "$ISSUE_TITLE" \
+                --body-file /tmp/review-failure-issue.md
+            fi
+          elif [ -n "$issue_number" ]; then
+            gh issue close "$issue_number" --repo "$REPO" \
+              --comment "自動レビューが回復しました: $RUN_URL"
+          fi
+
       - name: Clean up previous review artifacts
-        if: steps.review.outcome == 'success'
+        if: >-
+          steps.review.outcome == 'success' &&
+          steps.report.outputs.errored != 'true'
         continue-on-error: true
         uses: actions/github-script@v9
         with:
