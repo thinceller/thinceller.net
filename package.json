@@ -27,7 +27,7 @@
     "valibot": "1.4.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.16",
+    "@biomejs/biome": "2.5.3",
     "@playwright/test": "1.61.1",
     "@tailwindcss/postcss": "4.3.2",
     "@textlint-ja/textlint-rule-preset-ai-writing": "1.7.0",
