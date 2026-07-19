@@ -13,7 +13,10 @@ module.exports = {
       'ja-no-mixed-period': false,
       'ja-no-weak-phrase': false,
     },
-    'preset-ja-spacing': true,
+    'preset-ja-spacing': {
+      'ja-space-around-code': false,
+      'ja-space-around-link': false,
+    },
     'spellcheck-tech-word': true,
     '@textlint-ja/preset-ai-writing': true,
   },
