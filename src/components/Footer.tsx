@@ -1,4 +1,4 @@
-import { Github, Rss, Twitter } from 'lucide-react';
+import { Code, MessageCircle, Rss } from 'lucide-react';
 import type { FC } from 'react';
 
 export const Footer: FC = () => {
@@ -15,7 +15,7 @@ export const Footer: FC = () => {
             href="https://twitter.com/thinceller_dev"
             aria-label="Twitter link"
           >
-            <Twitter className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+            <MessageCircle className="w-5 h-5 text-gray-400 dark:text-gray-500" />
           </a>
           <a
             target="_blank"
@@ -23,7 +23,7 @@ export const Footer: FC = () => {
             href="https://github.com/thinceller"
             aria-label="GitHub link"
           >
-            <Github className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+            <Code className="w-5 h-5 text-gray-400 dark:text-gray-500" />
           </a>
           <a href="/blog/rss.xml" aria-label="RSS Feed">
             <Rss className="w-5 h-5 text-gray-400 dark:text-gray-500" />
