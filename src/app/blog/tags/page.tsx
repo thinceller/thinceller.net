@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description: 'すべてのタグの一覧',
   openGraph: {
     type: 'website',
-    url: '/tags',
+    url: '/blog/tags',
     title: `タグ一覧 | ${BLOG_NAME}`,
     description: 'すべてのタグの一覧',
     siteName: BLOG_NAME,
@@ -61,7 +61,7 @@ export default function Page() {
           {sortedTags.map(([tag, count]) => (
             <Link
               key={tag}
-              href={`/tags/${encodeURIComponent(tag)}`}
+              href={`/blog/tags/${encodeURIComponent(tag)}`}
               className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
             >
               <span className="text-lg">
