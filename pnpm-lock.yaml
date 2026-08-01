@@ -42,8 +42,8 @@ importers:
         specifier: 4.0.3
         version: 4.0.3
       lucide-react:
-        specifier: 1.23.0
-        version: 1.23.0(react@19.2.8)
+        specifier: 1.27.0
+        version: 1.27.0(react@19.2.8)
       mermaid:
         specifier: 11.16.0
         version: 11.16.0
@@ -2142,8 +2142,8 @@ packages:
   lru_map@0.4.1:
     resolution: {integrity: sha512-I+lBvqMMFfqaV8CJCISjI3wbjmwVu/VyOoU7+qtu9d7ioW5klMgsTTiUOUp+DJvfTTzKXoPbyC6YfgkNcyPSOg==}
 
-  lucide-react@1.23.0:
-    resolution: {integrity: sha512-38BpJcD0JhFosxHApP/BYsBetLpQFRoTRzEzstM/XCc3jsAG7wqaY1lgVwxiUe3xqYE+lNxo2PkCmYwXWrwwIw==}
+  lucide-react@1.27.0:
+    resolution: {integrity: sha512-rJicGl/3Fly/E0rOH1YmPZ6e49JCnKknh1ox1vpHnkfjujAkKA6sqUZvH3MTAaXXjgexyUwgNwTJzTtYuAFYJw==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -5437,7 +5437,7 @@ snapshots:
 
   lru_map@0.4.1: {}
 
-  lucide-react@1.23.0(react@19.2.8):
+  lucide-react@1.27.0(react@19.2.8):
     dependencies:
       react: 19.2.8
 
