@@ -24,6 +24,12 @@ async function listBlocks(blockId: string): Promise<NotionBlock[]> {
     blocks.push(...(res.results as NotionBlock[]));
     cursor = res.has_more ? (res.next_cursor ?? undefined) : undefined;
   } while (cursor);
+  // ネストされたリストなどの子ブロックを convert.mts が扱う形に取り込む
+  for (const block of blocks) {
+    if (block.has_children) {
+      block[block.type].children = await listBlocks(block.id);
+    }
+  }
   return blocks;
 }
 
@@ -78,8 +84,7 @@ for (const page of pages) {
     tags,
   });
 
-  const filename = `${publishedTime.slice(0, 10)}-${slug}.mdx`;
-  const outPath = path.join('_posts', filename);
+  const outPath = path.join('_posts', `${slug}.mdx`);
   fs.writeFileSync(outPath, `${frontmatter}\n\n${body}\n`);
   console.log(`wrote ${outPath}`);
 }

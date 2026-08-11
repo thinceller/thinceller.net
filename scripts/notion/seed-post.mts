@@ -14,11 +14,11 @@ if (!file) {
   process.exit(1);
 }
 
-const slugMatch = path.basename(file).match(/^\d{4}-\d{2}-\d{2}-(.+)\.mdx$/);
-if (!slugMatch) {
+// サイトの URL スラッグは日付込みのファイル名 stem（例: 2022-05-09-git-cc）
+const slug = path.basename(file, '.mdx');
+if (!/^\d{4}-\d{2}-\d{2}-/.test(slug)) {
   throw new Error(`unexpected filename: ${file}`);
 }
-const slug = slugMatch[1];
 
 const { data, content } = matter(fs.readFileSync(file, 'utf8'));
 const client = createNotionClient();

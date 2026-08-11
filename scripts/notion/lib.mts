@@ -63,6 +63,22 @@ export function notionLangToFence(lang: string): string {
   return lang === 'plain text' ? 'txt' : lang;
 }
 
+// 記事間の相対リンク（例: 2022-01-30-learning-rust）と絶対 URL の相互変換。
+// Notion のリンクは絶対 URL 必須のため、投入時に展開し書き出し時に戻す。
+const BLOG_URL_PREFIX = 'https://thinceller.net/blog/';
+const POST_SLUG = /^\d{4}-\d{2}-\d{2}-[\w-]+$/;
+
+function linkUrlToNotion(url: string): string {
+  return POST_SLUG.test(url) ? `${BLOG_URL_PREFIX}${url}` : url;
+}
+
+function linkUrlFromNotion(url: string): string {
+  const slug = url.startsWith(BLOG_URL_PREFIX)
+    ? url.slice(BLOG_URL_PREFIX.length)
+    : url;
+  return POST_SLUG.test(slug) ? slug : url;
+}
+
 const INLINE_PATTERN = /`([^`]+)`|\[([^\]]+)\]\(([^)]+)\)|\*\*([^*]+)\*\*/g;
 
 export function inlineMdToRichText(md: string): RichTextItem[] {
@@ -85,7 +101,7 @@ export function inlineMdToRichText(md: string): RichTextItem[] {
     } else if (linkText !== undefined) {
       items.push({
         type: 'text',
-        text: { content: linkText, link: { url: linkUrl } },
+        text: { content: linkText, link: { url: linkUrlToNotion(linkUrl) } },
       });
     } else {
       items.push({
@@ -114,7 +130,7 @@ export function richTextToInlineMd(richText: RichTextItem[]): string {
       }
       const url = item.href ?? item.text?.link?.url;
       if (url) {
-        text = `[${text}](${url})`;
+        text = `[${text}](${linkUrlFromNotion(url)})`;
       }
       return text;
     })
