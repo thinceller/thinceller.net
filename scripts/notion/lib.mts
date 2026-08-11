@@ -1,4 +1,5 @@
 import { Client } from '@notionhq/client';
+import { BLOG_URL } from '../../src/lib/constants.ts';
 
 export const DATA_SOURCE_ID =
   process.env.NOTION_DATA_SOURCE_ID ?? 'b8808b96-1d54-42ca-a631-06d7f64bcd2a';
@@ -65,7 +66,7 @@ export function notionLangToFence(lang: string): string {
 
 // 記事間の相対リンク（例: 2022-01-30-learning-rust）と絶対 URL の相互変換。
 // Notion のリンクは絶対 URL 必須のため、投入時に展開し書き出し時に戻す。
-const BLOG_URL_PREFIX = 'https://thinceller.net/blog/';
+const BLOG_URL_PREFIX = `${BLOG_URL}/blog/`;
 const POST_SLUG = /^\d{4}-\d{2}-\d{2}-[\w-]+$/;
 
 function linkUrlToNotion(url: string): string {
@@ -139,4 +140,61 @@ export function richTextToInlineMd(richText: RichTextItem[]): string {
 
 export function richTextToPlain(richText: RichTextItem[]): string {
   return richText.map((item) => item.plain_text ?? item.text.content).join('');
+}
+
+// Blog Posts データベースのプロパティスキーマ。
+// 読み書き双方がここを通ることでプロパティ名と形式を一元管理する。
+export interface PostMeta {
+  title: string;
+  slug: string;
+  description: string;
+  tags: string[];
+  publishedTime?: string;
+  modifiedTime?: string;
+}
+
+const textItem = (content: string): RichTextItem => ({
+  type: 'text',
+  text: { content },
+});
+
+export function postMetaToProperties(
+  meta: PostMeta,
+  status: 'Draft' | 'Published',
+): Record<string, unknown> {
+  return {
+    Title: { title: [textItem(meta.title)] },
+    Slug: { rich_text: [textItem(meta.slug)] },
+    Description: { rich_text: [textItem(meta.description)] },
+    Tags: { multi_select: meta.tags.map((name) => ({ name })) },
+    ...(meta.publishedTime
+      ? { PublishedTime: { date: { start: meta.publishedTime } } }
+      : {}),
+    ...(meta.modifiedTime
+      ? { ModifiedTime: { date: { start: meta.modifiedTime } } }
+      : {}),
+    Status: { select: { name: status } },
+  };
+}
+
+function toIsoUtc(date: string): string {
+  return new Date(date).toISOString().replace('.000Z', 'Z');
+}
+
+export function propertiesToPostMeta(
+  // biome-ignore lint/suspicious/noExplicitAny: Notion API のプロパティ型に動的アクセスするため
+  props: Record<string, any>,
+): PostMeta {
+  const publishedStart = props.PublishedTime.date?.start;
+  const modifiedStart = props.ModifiedTime?.date?.start;
+  return {
+    title: richTextToPlain(props.Title.title),
+    slug: richTextToPlain(props.Slug.rich_text),
+    description: richTextToPlain(props.Description.rich_text),
+    tags: (props.Tags.multi_select as { name: string }[]).map(
+      (tag) => tag.name,
+    ),
+    publishedTime: publishedStart ? toIsoUtc(publishedStart) : undefined,
+    modifiedTime: modifiedStart ? toIsoUtc(modifiedStart) : undefined,
+  };
 }

@@ -4,7 +4,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
 import { mdToBlocks } from './convert.mts';
-import { createNotionClient, DATA_SOURCE_ID } from './lib.mts';
+import {
+  createNotionClient,
+  DATA_SOURCE_ID,
+  postMetaToProperties,
+} from './lib.mts';
 
 const file = process.argv[2];
 if (!file) {
@@ -25,24 +29,18 @@ const client = createNotionClient();
 
 const page = await client.pages.create({
   parent: { type: 'data_source_id', data_source_id: DATA_SOURCE_ID },
-  properties: {
-    Title: { title: [{ type: 'text', text: { content: data.title } }] },
-    Slug: { rich_text: [{ type: 'text', text: { content: slug } }] },
-    Description: {
-      rich_text: [
-        { type: 'text', text: { content: String(data.description).trim() } },
-      ],
+  properties: postMetaToProperties(
+    {
+      title: data.title,
+      slug,
+      description: String(data.description).trim(),
+      tags: (data.tags ?? []) as string[],
+      publishedTime: data.publishedTime,
+      modifiedTime: data.modifiedTime,
     },
-    Tags: {
-      multi_select: ((data.tags ?? []) as string[]).map((name) => ({ name })),
-    },
-    PublishedTime: { date: { start: data.publishedTime } },
-    ...(data.modifiedTime
-      ? { ModifiedTime: { date: { start: data.modifiedTime } } }
-      : {}),
-    Status: { select: { name: 'Published' } },
+    'Published',
     // biome-ignore lint/suspicious/noExplicitAny: SDK のプロパティ型との突き合わせを省略
-  } as any,
+  ) as any,
   children: mdToBlocks(content.trim()) as never[],
 });
 

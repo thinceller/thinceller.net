@@ -13,6 +13,8 @@ export interface NotionBlock {
   [key: string]: any;
 }
 
+const LIST_ITEM = /^(\s*)(-|\d+\.) (.*)$/;
+
 export function mdToBlocks(body: string): NotionBlock[] {
   const blocks: NotionBlock[] = [];
   const lines = body.split('\n');
@@ -62,10 +64,10 @@ export function mdToBlocks(body: string): NotionBlock[] {
       i++;
       continue;
     }
-    if (/^(\s*)(-|\d+\.) /.test(line)) {
+    if (LIST_ITEM.test(line)) {
       const items: { indent: number; ordered: boolean; text: string }[] = [];
       while (i < lines.length) {
-        const item = lines[i].match(/^(\s*)(-|\d+\.) (.*)$/);
+        const item = lines[i].match(LIST_ITEM);
         if (!item) {
           break;
         }
@@ -161,13 +163,8 @@ function blockToMd(block: NotionBlock, numberedIndex: number): string | null {
       const level = '#'.repeat(Number(block.type.slice(-1)));
       return `${level} ${richTextToInlineMd(block[block.type].rich_text)}`;
     }
-    case 'paragraph': {
-      const plain = richTextToPlain(block.paragraph.rich_text);
-      if (BARE_URL.test(plain)) {
-        return `<OgpCard url="${plain}" />`;
-      }
+    case 'paragraph':
       return richTextToInlineMd(block.paragraph.rich_text);
-    }
     case 'bookmark':
       return `<OgpCard url="${block.bookmark.url}" />`;
     case 'bulleted_list_item':
@@ -204,24 +201,34 @@ function blockToMd(block: NotionBlock, numberedIndex: number): string | null {
   }
 }
 
+// Notion 上で URL をそのまま貼った段落は bookmark ブロックと同義として扱う
+function normalizeBlock(block: NotionBlock): NotionBlock {
+  if (block.type !== 'paragraph') {
+    return block;
+  }
+  const plain = richTextToPlain(block.paragraph.rich_text);
+  return BARE_URL.test(plain)
+    ? { type: 'bookmark', bookmark: { url: plain } }
+    : block;
+}
+
 export function blocksToMd(blocks: NotionBlock[]): string {
   const parts: string[] = [];
   let prevType: string | null = null;
   let numberedIndex = 0;
-  for (const block of blocks) {
+  for (const block of blocks.map(normalizeBlock)) {
     numberedIndex = block.type === 'numbered_list_item' ? numberedIndex + 1 : 0;
     const md = blockToMd(block, numberedIndex);
     if (md === null) {
       continue;
     }
-    // 裸 URL 段落は OgpCard として出力されるため bookmark と同一視する
-    const kind = md.startsWith('<OgpCard ') ? 'bookmark' : block.type;
     if (parts.length > 0) {
-      const isContinued = CONTINUED_TYPES.has(kind) && kind === prevType;
+      const isContinued =
+        CONTINUED_TYPES.has(block.type) && block.type === prevType;
       parts.push(isContinued ? '\n' : '\n\n');
     }
     parts.push(md);
-    prevType = kind;
+    prevType = block.type;
   }
   return parts.join('');
 }
