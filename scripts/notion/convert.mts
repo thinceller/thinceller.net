@@ -262,7 +262,7 @@ export function buildFrontmatter(props: {
   if (props.tags.length > 0) {
     lines.push('tags:');
     for (const tag of props.tags) {
-      lines.push(`  - ${tag}`);
+      lines.push(`  - ${yamlScalar(tag)}`);
     }
   } else {
     lines.push('tags: []');

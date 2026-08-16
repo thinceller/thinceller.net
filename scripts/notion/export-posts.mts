@@ -56,8 +56,10 @@ console.log(`found ${pages.length} published page(s)`);
 
 for (const page of pages) {
   const meta = propertiesToPostMeta(page.properties);
-  if (!meta.slug || !meta.publishedTime) {
-    console.warn(`skipping "${meta.title}": Slug or PublishedTime is missing`);
+  if (!meta.slug || !meta.description || !meta.publishedTime) {
+    console.warn(
+      `skipping "${meta.title}": Slug, Description, or PublishedTime is missing`,
+    );
     continue;
   }
 
