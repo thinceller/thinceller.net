@@ -17,6 +17,7 @@ tags:
 Next.js 16がリリースされ、TurbopackがstableになったりCache Componentsが導入されたりと大きな変更がありましたが、同時にNext.js DevTools MCPもリリースされています。
 
 Next.js DevTools MCPは以下のようなツールを提供しています。
+
 - Next.jsのドキュメントを検索するツール（`nextjs_docs`ツール）
 - Next.jsのログやエラーにアクセスするツール（`nextjs_runtime`ツール）
 - Next.js 16へのアップグレードを支援するツール（`upgrade_nextjs_16`ツール）
@@ -33,6 +34,7 @@ GitHub上の`upgrade_nextjs_16`ツールの実装を見てみます。
 <OgpCard url="https://github.com/vercel/next-devtools-mcp/blob/dfffb7da27676cd614978502f96d943caf53dc90/src/tools/upgrade-nextjs-16.ts" />
 
 プロンプトの詳細は以下のリンク先です。ざっくり内容をまとめると
+
 - 必要なリソースのロード
 - 事前条件の確認
 - Codemodの実行
@@ -69,6 +71,7 @@ Next.js DevTools MCPとClaude Codeを使ってNext.js 16へアップグレード
 次にClaude Codeを起動し、Next.js DevTools MCPを使うよう明示しつつNext.js 16へのアップグレードを指示します。
 
 公式のマイグレーションガイドでは以下のようなシンプルなプロンプトが例示されていました。今回私もこちらのプロンプトを使ってみました。
+
 ```text
 Next Devtools, help me upgrade my Next.js app to version 16
 ```
@@ -86,4 +89,3 @@ Next Devtools, help me upgrade my Next.js app to version 16
 これまでのNext.jsのアップグレードは、Codemodによる自動的なマイグレーションとそのほかの手動での変更箇所のチェックが必要でした。マイグレーションガイドをしっかり読んでいればそれほど難しくない作業ではありましたが、コードベースが大きくなるにつれてその作業量は増えていきます。
 
 Next.js DevTools MCPとClaude CodeなどのAIエージェントを使うことで、より自律的にNext.js 16へのアップグレードを実行できるようになりました。Codemodによる決定論的なアップグレードも併用されるため、AIエージェントを使ったアップグレードの信頼性はかなり高いです。今回は小規模なプロジェクトでのアップグレードでしたが、今度は業務で使っている大規模なプロジェクトでのアップグレードも試してみたいです。
-
