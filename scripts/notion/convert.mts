@@ -258,11 +258,14 @@ export function buildFrontmatter(props: {
   if (props.modifiedTime) {
     lines.push(`modifiedTime: '${props.modifiedTime}'`);
   }
+  // サイト側スキーマ（src/lib/frontmatter.ts）は tags キーの欠落を許さない
   if (props.tags.length > 0) {
     lines.push('tags:');
     for (const tag of props.tags) {
       lines.push(`  - ${tag}`);
     }
+  } else {
+    lines.push('tags: []');
   }
   lines.push('---');
   return lines.join('\n');
