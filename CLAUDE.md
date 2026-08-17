@@ -43,6 +43,9 @@ Biome使用（ESLint/Prettier不使用）:
 - オプション: `modifiedTime`, `tags`
 - 画像は `public/images/` に配置
 - Mermaid.js対応（`mermaid` コードブロック）
+- 執筆はNotionで行い、Notion→MDXへの同期を毎日GitHub Actions（`notion-sync.yml`）がPRとして自動作成する
+- 既存記事をNotionに投入する場合: `node --env-file=.env.local scripts/notion/seed-post.mts _posts/<file>.mdx`
+- MDX⇔Notion変換の往復整合性をオフラインで確認: `node scripts/notion/roundtrip-check.mts`
 
 ## Git規約
 
