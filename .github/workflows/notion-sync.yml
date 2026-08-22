@@ -1,0 +1,49 @@
+name: Notion sync
+
+on:
+  schedule:
+    # 毎日 06:00 JST
+    - cron: '0 21 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: notion-sync
+
+jobs:
+  sync:
+    name: Export posts from Notion
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Export posts from Notion
+        run: node scripts/notion/export-posts.mts
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+      - name: Lint posts
+        run: pnpm lint:post
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: |
+            chore(blog): Notionから記事を同期
+
+            Co-Authored-By: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          title: 'chore(blog): Notionから記事を同期'
+          body: |
+            Notion の Blog Posts データベースからの自動同期です。
+
+            > [!NOTE]
+            > GITHUB_TOKEN で作成された PR のため CI は自動起動しません。
+            > プレビューは Vercel のデプロイで確認できます。
+          branch: notion-sync
+          delete-branch: true
