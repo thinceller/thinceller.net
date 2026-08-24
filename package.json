@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.10",
-    "@notionhq/client": "5.25.2",
+    "@notionhq/client": "5.26.0",
     "@playwright/test": "1.62.1",
     "@tailwindcss/postcss": "4.3.3",
     "@textlint-ja/textlint-rule-preset-ai-writing": "1.7.0",
