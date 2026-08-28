@@ -32,7 +32,7 @@ jobs:
       - name: Lint posts
         run: pnpm lint:post
       - name: Create pull request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: |
             chore(blog): Notionから記事を同期
