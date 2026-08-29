@@ -15,8 +15,8 @@
     "feed": "6.0.0",
     "gray-matter": "4.0.3",
     "lucide-react": "1.33.0",
-    "mermaid": "11.17.0",
-    "next": "16.3.1",
+    "mermaid": "11.17.2",
+    "next": "16.3.3",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-twitter-widgets": "1.11.0",
@@ -28,8 +28,8 @@
     "valibot": "1.4.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.9",
-    "@notionhq/client": "5.25.2",
+    "@biomejs/biome": "2.5.10",
+    "@notionhq/client": "5.26.0",
     "@playwright/test": "1.62.1",
     "@tailwindcss/postcss": "4.3.3",
     "@textlint-ja/textlint-rule-preset-ai-writing": "1.7.0",
