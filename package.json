@@ -28,7 +28,7 @@
     "valibot": "1.4.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.11",
+    "@biomejs/biome": "2.5.12",
     "@notionhq/client": "5.26.0",
     "@playwright/test": "1.62.1",
     "@tailwindcss/postcss": "4.3.3",
