@@ -8,7 +8,7 @@
     "@shikijs/langs": "4.4.3",
     "@shikijs/rehype": "4.4.3",
     "@shikijs/themes": "4.4.3",
-    "@tabler/icons-react": "3.46.0",
+    "@tabler/icons-react": "3.48.0",
     "@vercel/analytics": "2.0.1",
     "@vercel/speed-insights": "2.0.0",
     "dayjs": "1.11.23",
