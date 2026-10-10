@@ -40,7 +40,7 @@
     "@types/react": "19.2.18",
     "babel-plugin-react-compiler": "1.0.0",
     "postcss": "8.5.29",
-    "schema-dts": "2.0.0",
+    "schema-dts": "2.1.0",
     "tailwindcss": "4.3.3",
     "textlint": "15.8.0",
     "textlint-rule-preset-ja-spacing": "3.0.3",
