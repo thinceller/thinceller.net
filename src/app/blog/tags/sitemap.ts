@@ -1,8 +1,12 @@
 import type { MetadataRoute } from 'next';
+import { cacheLife } from 'next/cache';
 import { BLOG_URL } from '@/lib/constants';
 import { getAllTags } from '@/lib/post';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  'use cache';
+  cacheLife('max');
+
   const allTags = getAllTags();
 
   const sitemapEntries: MetadataRoute.Sitemap = [

@@ -1,10 +1,8 @@
 import { generateAtomFeed } from '@/lib/rss';
 
-export const dynamic = 'force-static';
-
 export async function GET() {
   try {
-    const feed = generateAtomFeed();
+    const feed = await generateAtomFeed();
 
     return new Response(feed, {
       headers: {

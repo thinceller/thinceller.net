@@ -1,8 +1,11 @@
 import { IconBrandGithub, IconBrandTwitter } from '@tabler/icons-react';
 import { Rss } from 'lucide-react';
-import type { FC } from 'react';
+import { cacheLife } from 'next/cache';
 
-export const Footer: FC = () => {
+export async function Footer() {
+  'use cache';
+  cacheLife('max');
+
   return (
     <footer className="border-t border-gray-200 dark:border-gray-800">
       <div className="flex flex-row justify-between mx-auto max-w-(--breakpoint-lg) p-6">
@@ -33,4 +36,4 @@ export const Footer: FC = () => {
       </div>
     </footer>
   );
-};
+}

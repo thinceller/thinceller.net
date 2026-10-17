@@ -10,6 +10,10 @@ function getPostSlugs(): string[] {
   return fs.readdirSync(postsDir);
 }
 
+export function hasPost(slug: string): boolean {
+  return getPostSlugs().includes(`${slug}.mdx`);
+}
+
 // 投稿データの型
 type PostData = {
   slug: string;

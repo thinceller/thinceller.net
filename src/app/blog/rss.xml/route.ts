@@ -1,10 +1,8 @@
 import { generateRSSFeed } from '@/lib/rss';
 
-export const dynamic = 'force-static';
-
 export async function GET() {
   try {
-    const feed = generateRSSFeed();
+    const feed = await generateRSSFeed();
 
     return new Response(feed, {
       headers: {

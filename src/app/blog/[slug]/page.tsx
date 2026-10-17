@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 import { JsonLd } from '@/components/JsonLd';
 import { PostFooter } from '@/components/PostFooter';
@@ -7,7 +8,7 @@ import { RelatedPosts } from '@/components/RelatedPosts';
 import { TableOfContents } from '@/components/TableOfContents';
 import { BLOG_AUTHOR, BLOG_URL, SITE_NAME } from '@/lib/constants';
 import { getPostBySlug } from '@/lib/mdx';
-import { getAllPosts, getRelatedPosts } from '@/lib/post';
+import { getAllPosts, getRelatedPosts, hasPost } from '@/lib/post';
 import {
   createBlogPostingEntity,
   createBreadcrumbList,
@@ -16,8 +17,6 @@ import {
   createWebPageEntity,
   createWebSiteEntity,
 } from '@/lib/structured-data';
-
-export const dynamicParams = false;
 
 export function generateStaticParams() {
   const posts = getAllPosts();
@@ -35,6 +34,7 @@ type Props = {
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params;
+  if (!hasPost(params.slug)) notFound();
   const { frontmatter } = await getPostBySlug(params.slug);
 
   return {
@@ -60,6 +60,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
 export default async function Page(props: Props) {
   const params = await props.params;
+  if (!hasPost(params.slug)) notFound();
   const { content, frontmatter, headings } = await getPostBySlug(params.slug);
 
   // 関連記事を取得
