@@ -17,18 +17,21 @@ type ZennApiResponse = {
 
 export async function getLatestZennArticles(limit = 5): Promise<ZennArticle[]> {
   'use cache';
-  cacheLife('hours');
 
+  // 失敗時に throw すると prerender が失敗するため、フォールバックを短期間だけキャッシュして再取得させる
   try {
     const res = await fetch(
       `https://zenn.dev/api/articles?username=${ZENN_USERNAME}&order=latest`,
     );
     if (!res.ok) {
+      cacheLife('minutes');
       return [];
     }
     const data: ZennApiResponse = await res.json();
+    cacheLife('hours');
     return data.articles?.slice(0, limit) ?? [];
   } catch {
+    cacheLife('minutes');
     return [];
   }
 }

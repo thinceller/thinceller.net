@@ -30,6 +30,7 @@ type Props = {
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params;
   const tag = decodeURIComponent(params.tag);
+  if (getPostsByTag(tag).length === 0) notFound();
 
   return {
     title: tag,

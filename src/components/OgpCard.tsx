@@ -15,8 +15,8 @@ type Props = {
 
 async function fetchOgpData(url: string): Promise<OgpData> {
   'use cache';
-  cacheLife('days');
 
+  // 失敗時に throw すると prerender が失敗するため、フォールバックを短期間だけキャッシュして再取得させる
   try {
     const response = await fetch(url, {
       headers: {
@@ -107,6 +107,7 @@ async function fetchOgpData(url: string): Promise<OgpData> {
 
     const favicon = `https://www.google.com/s2/favicons?domain=${urlObj.hostname}`;
 
+    cacheLife('days');
     return {
       title,
       description,
@@ -115,6 +116,7 @@ async function fetchOgpData(url: string): Promise<OgpData> {
     };
   } catch (error) {
     console.error('Failed to fetch OGP data:', error);
+    cacheLife('minutes');
     // Return minimal data on error
     return {
       title: url,
