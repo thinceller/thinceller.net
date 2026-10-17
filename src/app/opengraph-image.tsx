@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { cacheLife } from 'next/cache';
 import { ImageResponse } from 'next/og';
 
 import { SITE_NAME } from '@/lib/constants';
@@ -12,6 +13,9 @@ export const size = {
 export const contentType = 'image/png';
 
 const getAvatar = async () => {
+  'use cache';
+  cacheLife('max');
+
   const res = await readFile(
     join(process.cwd(), 'public', 'images', 'avatar.jpg'),
   );
@@ -22,6 +26,9 @@ const getAvatar = async () => {
  * @see {@link https://github.com/yuru7/NOTONOTO}
  */
 const getFontBold = async () => {
+  'use cache';
+  cacheLife('max');
+
   const res = await readFile(
     join(process.cwd(), 'public', 'fonts', 'NOTONOTO35HS-Bold.ttf'),
   );
@@ -29,6 +36,9 @@ const getFontBold = async () => {
 };
 
 const getFontRegular = async () => {
+  'use cache';
+  cacheLife('max');
+
   const res = await readFile(
     join(process.cwd(), 'public', 'fonts', 'NOTONOTO35HS-Regular.ttf'),
   );

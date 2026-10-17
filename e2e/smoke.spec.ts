@@ -56,6 +56,17 @@ test.describe('ページ表示確認', () => {
     await expect(page.getByRole('article').first()).toBeVisible();
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   });
+
+  test('存在しない記事・タグ・OG画像は404を返す', async ({ request }) => {
+    for (const path of [
+      '/blog/does-not-exist',
+      '/blog/does-not-exist/opengraph-image',
+      '/blog/tags/does-not-exist',
+    ]) {
+      const response = await request.get(path);
+      expect(response.status(), path).toBe(404);
+    }
+  });
 });
 
 test.describe('RSSフィード検証', () => {

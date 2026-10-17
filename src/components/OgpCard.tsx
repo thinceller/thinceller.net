@@ -1,3 +1,4 @@
+import { cacheLife } from 'next/cache';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -13,13 +14,15 @@ type Props = {
 };
 
 async function fetchOgpData(url: string): Promise<OgpData> {
+  'use cache';
+  cacheLife('days');
+
   try {
     const response = await fetch(url, {
       headers: {
         'User-Agent':
           'Mozilla/5.0 (compatible; OGPBot/1.0; +https://thinceller.net)',
       },
-      next: { revalidate: 86400 }, // Cache for 24 hours
     });
 
     if (!response.ok) {

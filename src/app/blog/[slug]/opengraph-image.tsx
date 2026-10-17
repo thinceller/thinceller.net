@@ -1,8 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { notFound } from 'next/navigation';
 import { ImageResponse } from 'next/og';
 import { BLOG_NAME } from '@/lib/constants';
-import { getPostBySlug } from '@/lib/post';
+import { getPostBySlug, hasPost } from '@/lib/post';
 
 export const alt = BLOG_NAME;
 export const size = {
@@ -38,13 +39,13 @@ const getFontRegular = async () => {
 // 以前は opengraph-image.png/route.tsx (Route Handler) を使用していたが、
 // Next.js 16.2.0 でルート解決に失敗するようになったため標準のファイルコンベンションに移行。
 // Vercel環境でのfs経由のmdxファイルアクセスも動作確認済み。
-// 無効なslugへの保護は親の page.tsx の dynamicParams = false により提供される。
 export default async function Image({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  if (!hasPost(slug)) notFound();
   const post = getPostBySlug(slug);
   const logoSrc = await getAvatar();
 

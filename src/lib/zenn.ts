@@ -1,3 +1,4 @@
+import { cacheLife } from 'next/cache';
 import { ZENN_USERNAME } from '@/lib/constants';
 
 export type ZennArticle = {
@@ -15,10 +16,12 @@ type ZennApiResponse = {
 };
 
 export async function getLatestZennArticles(limit = 5): Promise<ZennArticle[]> {
+  'use cache';
+  cacheLife('hours');
+
   try {
     const res = await fetch(
       `https://zenn.dev/api/articles?username=${ZENN_USERNAME}&order=latest`,
-      { next: { revalidate: 3600 } },
     );
     if (!res.ok) {
       return [];

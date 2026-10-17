@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 import { JsonLd } from '@/components/JsonLd';
 import { PostCard } from '@/components/PostCard';
@@ -11,8 +12,6 @@ import {
   createPersonEntity,
   createWebSiteEntity,
 } from '@/lib/structured-data';
-
-export const dynamicParams = false;
 
 export function generateStaticParams() {
   const allTags = getAllTags();
@@ -53,6 +52,7 @@ export default async function Page(props: Props) {
   const params = await props.params;
   const tag = decodeURIComponent(params.tag);
   const posts = getPostsByTag(tag);
+  if (posts.length === 0) notFound();
 
   const tagPath = `/blog/tags/${params.tag}`;
   const jsonLd = createGraphJsonLd([

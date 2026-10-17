@@ -1,4 +1,5 @@
 import { Feed } from 'feed';
+import { cacheLife } from 'next/cache';
 import { BLOG_AUTHOR, BLOG_NAME, BLOG_URL } from './constants';
 import { getAllPosts } from './post';
 
@@ -78,14 +79,20 @@ function createFeedInstance(
   return feed;
 }
 
-export function generateRSSFeed(): string {
+export async function generateRSSFeed(): Promise<string> {
+  'use cache';
+  cacheLife('max');
+
   const posts = getAllPosts();
 
   const feed = createFeedInstance(posts);
   return feed.rss2();
 }
 
-export function generateAtomFeed(): string {
+export async function generateAtomFeed(): Promise<string> {
+  'use cache';
+  cacheLife('max');
+
   const posts = getAllPosts();
 
   const feed = createFeedInstance(posts);
