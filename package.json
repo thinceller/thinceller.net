@@ -48,7 +48,7 @@
     "textlint-rule-spellcheck-tech-word": "5.0.0",
     "typescript": "7.0.2"
   },
-  "packageManager": "pnpm@11.25.0+sha512.5cde925b4f075f725eb71fbae18a42ffe784524789f19b61c731cb8721ec28aaee160e01a8d5af4fedb2a42cdbf300efe23db356b0d4a17b4d63e11f8ab7c956",
+  "packageManager": "pnpm@12.12.0+sha512.2ee06ac86db554cf384421461220f0e336a487bfd41b2acd04e17a86b1487832fe45e8d1743f7fc52acc77de12d2356b536fedf8229fc483239e40b13d474449",
   "scripts": {
     "build": "next build",
     "build:analyze": "next experimental-analyze",
