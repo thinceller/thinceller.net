@@ -36,6 +36,13 @@ Biome使用（ESLint/Prettier不使用）:
 
 新規UI要素追加時は既存の色・余白・ボーダー・装飾を流用し、独自値を避けて統一感を保つ。
 
+## Next.js (Cache Components)
+
+`cacheComponents: true` 有効。`dynamic` / `dynamicParams` のRoute Segment Configは使えない。
+- 未知のslug・タグは `notFound()` で404を返す
+- `new Date()` やMDXコンパイル等 prerender 中に不安定な処理、外部fetchのキャッシュは `'use cache'` + `cacheLife` を使う（`next.revalidate` は使わない）
+- `'use cache'` 内で throw すると prerender が失敗する。外部取得の失敗時はフォールバックを返し `cacheLife('minutes')` で短命にする
+
 ## ブログ記事
 
 - 配置: `_posts/YYYY-MM-DD-title.mdx`
