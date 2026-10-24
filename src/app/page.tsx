@@ -9,6 +9,7 @@ import { BLOG_URL, SITE_NAME, ZENN_PROFILE_URL } from '@/lib/constants';
 import { getAllPosts } from '@/lib/post';
 import {
   createGraphJsonLd,
+  createOrganizationEntity,
   createPersonEntity,
   createWebPageEntity,
   createWebSiteEntity,
@@ -28,6 +29,7 @@ export default async function Page() {
   const jsonLd = createGraphJsonLd([
     createWebSiteEntity(),
     createPersonEntity(),
+    createOrganizationEntity(),
     {
       ...createWebPageEntity({
         path: '',
