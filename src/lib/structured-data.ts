@@ -4,6 +4,7 @@ import type {
   CollectionPage,
   Graph,
   ListItem,
+  Organization,
   Person,
   ProfilePage,
   Thing,
@@ -43,6 +44,18 @@ export function createPersonEntity(): Person {
     image: AVATAR_URL,
     sameAs: [AUTHOR_TWITTER, AUTHOR_GITHUB],
     description: 'ソフトウェアエンジニア',
+  };
+}
+
+export function createOrganizationEntity(): Organization {
+  return {
+    '@type': 'Organization',
+    '@id': `${BLOG_URL}/#organization`,
+    name: SITE_NAME,
+    url: BLOG_URL,
+    logo: AVATAR_URL,
+    founder: { '@id': `${BLOG_URL}/#person` },
+    sameAs: [AUTHOR_TWITTER, AUTHOR_GITHUB],
   };
 }
 

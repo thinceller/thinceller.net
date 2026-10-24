@@ -102,7 +102,7 @@ function parseJsonLd(text: string | null): JsonLdGraph {
 }
 
 test.describe('構造化データ（JSON-LD）', () => {
-  test('トップページに WebSite, Person, WebPage が含まれる', async ({
+  test('トップページに WebSite, Person, Organization, WebPage が含まれる', async ({
     page,
   }) => {
     await page.goto('/');
@@ -117,6 +117,7 @@ test.describe('構造化データ（JSON-LD）', () => {
     const types = data['@graph'].map((e: { '@type': string }) => e['@type']);
     expect(types).toContain('WebSite');
     expect(types).toContain('Person');
+    expect(types).toContain('Organization');
     expect(types).toContain('WebPage');
 
     // @id が設定されていること
@@ -131,6 +132,12 @@ test.describe('構造化データ（JSON-LD）', () => {
     );
     expect(person).toBeDefined();
     expect(person['@id']).toContain('#person');
+
+    const organization = data['@graph'].find(
+      (e: { '@type': string }) => e['@type'] === 'Organization',
+    );
+    expect(organization).toBeDefined();
+    expect(organization['@id']).toContain('#organization');
   });
 
   test('トップページに BreadcrumbList が含まれない', async ({ page }) => {
