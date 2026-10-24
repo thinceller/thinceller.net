@@ -55,7 +55,6 @@ export function createOrganizationEntity(): Organization {
     url: BLOG_URL,
     logo: AVATAR_URL,
     founder: { '@id': `${BLOG_URL}/#person` },
-    sameAs: [AUTHOR_TWITTER, AUTHOR_GITHUB],
   };
 }
 
