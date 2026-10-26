@@ -36,6 +36,13 @@ Biome使用（ESLint/Prettier不使用）:
 
 新規UI要素追加時は既存の色・余白・ボーダー・装飾を流用し、独自値を避けて統一感を保つ。
 
+## Cache Components
+
+`cacheComponents: true` のため以下に注意:
+- `dynamic` / `dynamicParams` / `revalidate` などのルートセグメント設定は使えない（未知のslugは `notFound()` で404）
+- `new Date()` や外部fetch、MDXコンパイルなど prerender 中に不安定な処理は `'use cache'` + `cacheLife` で包む
+- `'use cache'` 内で throw しない（prerender失敗）。失敗時はフォールバックを返し `cacheLife('minutes')` にする
+
 ## ブログ記事
 
 - 配置: `_posts/YYYY-MM-DD-title.mdx`
