@@ -48,6 +48,7 @@ proposed → accepted → superseded
 2. **新ADR**: Contextセクションに旧ADRへの参照を含め、なぜ以前の決定を変更するのかを明記する
 
 例（旧ADRのStatus部分）:
+
 ```markdown
 ## Status
 
@@ -73,6 +74,7 @@ Superseded by [Adopt Tailwind CSS for Styling](2026-04-12-adopt-tailwind-css-for
 `docs/adr/` 内の既存ADRを確認し、今回の意思決定と関連するADRがないかチェックする。
 
 確認すべきポイント:
+
 - **同じ領域の過去の決定があるか**: 例えば、スタイリング手法のADRが既にある状態で新しいスタイリング手法を採用する場合
 - **過去の決定と矛盾しないか**: 新しい決定が既存ADRの前提を覆す場合はsupersede対象
 
@@ -81,6 +83,7 @@ Superseded by [Adopt Tailwind CSS for Styling](2026-04-12-adopt-tailwind-css-for
 ### Step 3: ADRファイルの作成
 
 ファイル名: `docs/adr/YYYY-MM-DD-title-in-kebab-case.md`
+
 - 日付は今日の日付
 - タイトル部分は英語のkebab-case
 

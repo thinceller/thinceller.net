@@ -3,7 +3,7 @@ name: Notion sync
 on:
   schedule:
     # 毎日 06:00 JST
-    - cron: '0 21 * * *'
+    - cron: "0 21 * * *"
   workflow_dispatch:
 
 permissions:
@@ -22,8 +22,8 @@ jobs:
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
-          node-version: '24'
-          cache: 'pnpm'
+          node-version: "24"
+          cache: "pnpm"
       - run: pnpm install --frozen-lockfile
       - name: Export posts from Notion
         run: node scripts/notion/export-posts.mts
@@ -38,7 +38,7 @@ jobs:
             chore(blog): Notionから記事を同期
 
             Co-Authored-By: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-          title: 'chore(blog): Notionから記事を同期'
+          title: "chore(blog): Notionから記事を同期"
           body: |
             Notion の Blog Posts データベースからの自動同期です。
 

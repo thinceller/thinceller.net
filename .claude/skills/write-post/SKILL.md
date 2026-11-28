@@ -33,6 +33,7 @@ description: |
 
 1. ファイル名を決定: `_posts/YYYY-MM-DD-slug.mdx`（日付は今日、slugはトピックから英語で生成）
 2. フロントマターを生成:
+
    ```yaml
    ---
    title: "記事タイトル"

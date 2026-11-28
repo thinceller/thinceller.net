@@ -11,7 +11,7 @@ inputs:
   execution-file:
     description: claude-code-action の execution_file output
     required: false
-    default: ''
+    default: ""
   pr-number:
     description: PR 番号
     required: true
