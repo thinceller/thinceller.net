@@ -8,12 +8,12 @@ SEO対策としてJSON-LD形式の構造化データを各ページに配置し�
 
 ### 1. ライブラリの選択肢
 
-| ライブラリ | 特徴 | 推奨度 |
-|------------|------|--------|
-| **schema-dts** (Google公式) | TypeScript型定義のみ提供、依存関係なし、型安全 | ★★★ |
-| next-seo | Next.js専用、JSON-LDコンポーネント内蔵、設定が豊富 | ★★ |
-| react-schemaorg | Reactコンポーネントベース | ★ |
-| ライブラリなし | Next.js標準機能のみ使用、依存関係増加なし | ★★★ |
+| ライブラリ                  | 特徴                                               | 推奨度 |
+| --------------------------- | -------------------------------------------------- | ------ |
+| **schema-dts** (Google公式) | TypeScript型定義のみ提供、依存関係なし、型安全     | ★★★    |
+| next-seo                    | Next.js専用、JSON-LDコンポーネント内蔵、設定が豊富 | ★★     |
+| react-schemaorg             | Reactコンポーネントベース                          | ★      |
+| ライブラリなし              | Next.js標準機能のみ使用、依存関係増加なし          | ★★★    |
 
 **推奨**: `schema-dts` を使用（TypeScriptの型補完・バリデーションを活用しつつ、軽量で依存関係が少ない）
 
@@ -44,6 +44,7 @@ export default function Page() {
 ```
 
 **重要ポイント**:
+
 - Server Component で実装し、静的生成時にJSON-LDが含まれるようにする
 - `<head>` ではなくページコンポーネント内に配置（Next.js App Routerの仕様）
 - クライアントサイドJavaScriptに依存しない
@@ -60,14 +61,14 @@ export default function Page() {
 
 ## 各ページに適用するスキーマタイプ
 
-| ページ | スキーマタイプ | 主要プロパティ |
-|--------|---------------|----------------|
-| トップページ (`/`) | WebSite | name, url, description, author |
-| Aboutページ (`/about`) | ProfilePage + Person | name, description, image, sameAs |
-| ブログ一覧 (`/blog`) | CollectionPage | name, description, hasPart |
-| ブログ記事 (`/blog/[slug]`) | BlogPosting | headline, description, datePublished, dateModified, author, image |
-| タグ一覧 (`/blog/tags`) | CollectionPage | name, description |
-| タグ別記事一覧 (`/blog/tags/[tag]`) | CollectionPage | name, description, about |
+| ページ                              | スキーマタイプ       | 主要プロパティ                                                    |
+| ----------------------------------- | -------------------- | ----------------------------------------------------------------- |
+| トップページ (`/`)                  | WebSite              | name, url, description, author                                    |
+| Aboutページ (`/about`)              | ProfilePage + Person | name, description, image, sameAs                                  |
+| ブログ一覧 (`/blog`)                | CollectionPage       | name, description, hasPart                                        |
+| ブログ記事 (`/blog/[slug]`)         | BlogPosting          | headline, description, datePublished, dateModified, author, image |
+| タグ一覧 (`/blog/tags`)             | CollectionPage       | name, description                                                 |
+| タグ別記事一覧 (`/blog/tags/[tag]`) | CollectionPage       | name, description, about                                          |
 
 ## 実装手順
 
@@ -246,36 +247,40 @@ pnpm start
 
 ## ファイル変更一覧
 
-| ファイル | 変更内容 |
-|----------|----------|
-| `package.json` | schema-dts 追加 |
-| `src/components/JsonLd.tsx` | 新規作成 |
-| `src/lib/constants.ts` | SNSリンク等の定数追加 |
-| `src/app/page.tsx` | WebSite スキーマ追加 |
-| `src/app/about/page.tsx` | ProfilePage スキーマ追加 |
-| `src/app/blog/page.tsx` | CollectionPage スキーマ追加 |
-| `src/app/blog/[slug]/page.tsx` | BlogPosting スキーマ追加 |
-| `src/app/blog/tags/page.tsx` | CollectionPage スキーマ追加 |
+| ファイル                           | 変更内容                    |
+| ---------------------------------- | --------------------------- |
+| `package.json`                     | schema-dts 追加             |
+| `src/components/JsonLd.tsx`        | 新規作成                    |
+| `src/lib/constants.ts`             | SNSリンク等の定数追加       |
+| `src/app/page.tsx`                 | WebSite スキーマ追加        |
+| `src/app/about/page.tsx`           | ProfilePage スキーマ追加    |
+| `src/app/blog/page.tsx`            | CollectionPage スキーマ追加 |
+| `src/app/blog/[slug]/page.tsx`     | BlogPosting スキーマ追加    |
+| `src/app/blog/tags/page.tsx`       | CollectionPage スキーマ追加 |
 | `src/app/blog/tags/[tag]/page.tsx` | CollectionPage スキーマ追加 |
 
 ## 参考リンク
 
 ### Next.js 公式
+
 - [Next.js JSON-LD Guide](https://nextjs.org/docs/app/guides/json-ld)
 - [Next.js Metadata](https://nextjs.org/docs/app/building-your-application/optimizing/metadata)
 
 ### Google 公式
+
 - [Google 構造化データ概要](https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data)
 - [Article 構造化データ](https://developers.google.com/search/docs/appearance/structured-data/article)
 - [Rich Results Test](https://search.google.com/test/rich-results)
 - [構造化データガイドライン](https://developers.google.com/search/docs/appearance/structured-data/sd-policies)
 
 ### Schema.org
+
 - [BlogPosting](https://schema.org/BlogPosting)
 - [WebSite](https://schema.org/WebSite)
 - [ProfilePage](https://schema.org/ProfilePage)
 
 ### ライブラリ
+
 - [schema-dts (GitHub)](https://github.com/google/schema-dts)
 - [schema-dts (npm)](https://www.npmjs.com/package/schema-dts)
 

@@ -25,24 +25,24 @@ accepted
 
 #### @id 規約
 
-| エンティティ | @id パターン |
-|---|---|
-| WebSite | `https://thinceller.net/#website` |
-| Person | `https://thinceller.net/#person` |
-| WebPage | `https://thinceller.net{path}#webpage` |
-| BlogPosting | `https://thinceller.net/blog/{slug}#blogposting` |
-| BreadcrumbList | `https://thinceller.net{path}#breadcrumb` |
+| エンティティ   | @id パターン                                     |
+| -------------- | ------------------------------------------------ |
+| WebSite        | `https://thinceller.net/#website`                |
+| Person         | `https://thinceller.net/#person`                 |
+| WebPage        | `https://thinceller.net{path}#webpage`           |
+| BlogPosting    | `https://thinceller.net/blog/{slug}#blogposting` |
+| BreadcrumbList | `https://thinceller.net{path}#breadcrumb`        |
 
 #### ページごとのエンティティ構成
 
-| ページ | エンティティ |
-|---|---|
-| `/` | WebSite, Person, WebPage |
-| `/about` | WebSite, Person, ProfilePage, BreadcrumbList |
-| `/blog` | WebSite, Person, CollectionPage, BreadcrumbList |
-| `/blog/[slug]` | WebSite, Person, WebPage, BlogPosting, BreadcrumbList |
-| `/blog/tags` | WebSite, Person, CollectionPage, BreadcrumbList |
-| `/blog/tags/[tag]` | WebSite, Person, CollectionPage, BreadcrumbList |
+| ページ             | エンティティ                                          |
+| ------------------ | ----------------------------------------------------- |
+| `/`                | WebSite, Person, WebPage                              |
+| `/about`           | WebSite, Person, ProfilePage, BreadcrumbList          |
+| `/blog`            | WebSite, Person, CollectionPage, BreadcrumbList       |
+| `/blog/[slug]`     | WebSite, Person, WebPage, BlogPosting, BreadcrumbList |
+| `/blog/tags`       | WebSite, Person, CollectionPage, BreadcrumbList       |
+| `/blog/tags/[tag]` | WebSite, Person, CollectionPage, BreadcrumbList       |
 
 ### 実装方針
 

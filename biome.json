@@ -28,6 +28,19 @@
       }
     }
   },
+  "yaml": {
+    "formatter": {
+      "bracketSpacing": false
+    }
+  },
+  "markdown": {
+    "parser": {
+      "frontmatter": true
+    },
+    "formatter": {
+      "formatEmbeds": false
+    }
+  },
   "javascript": {
     "formatter": {
       "jsxQuoteStyle": "double",

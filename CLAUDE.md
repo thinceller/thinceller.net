@@ -30,6 +30,7 @@ pnpm test:e2e:ui  # Playwright UIモードでE2Eテスト
 ## コードスタイル
 
 Biome使用（ESLint/Prettier不使用）:
+
 - JS引用符: シングルクォート / JSX引用符: ダブルクォート
 - 行幅80文字、インデント2スペース、末尾カンマ・セミコロン常時
 - img要素禁止 → `next/image` の `<Image>` を使用

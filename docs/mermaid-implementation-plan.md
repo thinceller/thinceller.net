@@ -18,6 +18,7 @@ MDXファイル (_posts/*.mdx)
 ```
 
 **rehypeプラグインチェーン（処理順）:**
+
 1. `rehype-code-titles` - コードブロックタイトル抽出
 2. `rehypeShikiFromHighlighter` - Shikiシンタックスハイライト（Night Owlテーマ）
 3. `rehype-slug` - 見出しID付与
@@ -45,12 +46,14 @@ MDXファイル (_posts/*.mdx)
 `mermaid` パッケージをブラウザで動的にimportし、`useEffect`でSVGを描画する。
 
 **メリット:**
+
 - Playwright等のビルド時依存なし（Vercelデプロイに影響なし）
 - テーマ切り替え時にダイアグラムを再描画できる（動的ダークモード対応）
 - 既存のrehypeパイプラインへの変更が少ない
 - Next.js App Router / RSCとの互換性が高い
 
 **デメリット:**
+
 - mermaidライブラリが大きい（~2MB+ minified）→ 動的importで緩和
 - 初回表示時にローディング状態が発生する（JSロード→描画）
 - 図の内容が初期HTMLに含まれない（SEO的にはブログ図表なので影響は軽微）
@@ -60,10 +63,12 @@ MDXファイル (_posts/*.mdx)
 `rehype-mermaid` をrehypeプラグインチェーンに追加し、ビルド時にSVGを生成する。
 
 **メリット:**
+
 - クライアントにmermaidを配信しない（バンドルサイズゼロ）
 - 初期HTMLにSVGが含まれる（レイアウトシフトなし）
 
 **デメリット:**
+
 - Playwright（+Chromium ~200MB+）のビルド環境依存
 - Vercelビルド環境でのPlaywright設定が必要
 - ダークモード対応が `<picture>` + `prefers-color-scheme` に限定（`data-theme`ベースの切り替えと不整合）
@@ -73,6 +78,7 @@ MDXファイル (_posts/*.mdx)
 ### 結論: **アプローチA（クライアントサイドレンダリング）を採用**
 
 理由:
+
 1. Vercelデプロイの安定性（追加依存なし）
 2. 既存の`data-theme`ベースのダークモードとシームレスに統合可能
 3. 実装がシンプルで保守しやすい
@@ -100,11 +106,13 @@ pnpm add mermaid
 mermaidコードブロックをShikiのハイライト処理から除外し、カスタムコンポーネントとして出力するためのrehypeプラグインを作成する。
 
 **動作:**
+
 - ASTを走査し、`<code class="language-mermaid">` を持つ `<pre>` 要素を検出
 - 該当要素を `<Mermaid chart="..." />` に相当するMDXコンポーネント呼び出しに書き換え
 - Shikiプラグインより**前**にチェーンに配置し、mermaidブロックがハイライトされないようにする
 
 **実装案:**
+
 ```typescript
 // src/lib/rehype-mermaid.ts
 import type { Element, Root, Text } from 'hast';
@@ -154,12 +162,14 @@ export function rehypeMermaid() {
 ### Step 3: Mermaidクライアントコンポーネント作成 — `src/components/MermaidDiagram.tsx`
 
 **責務:**
+
 - `mermaid` ライブラリの動的import
 - `useTheme()` でテーマ取得 → Mermaidテーマ設定
 - SVG描画・再描画（テーマ変更時）
 - ローディング状態の表示
 
 **実装案:**
+
 ```typescript
 // src/components/MermaidDiagram.tsx
 'use client';
@@ -241,6 +251,7 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
 ```
 
 **ポイント:**
+
 - `useTheme()` の `resolvedTheme` を `useEffect` の依存配列に入れることで、テーマ切り替え時に自動再描画
 - `mermaid.render()` はユニークなIDが必要 → `useId()` で生成
 - **CLS軽減**: ローディング中は `min-height: 200px` の固定高さプレースホルダを表示し、描画後のレイアウトシフトを抑制
@@ -310,7 +321,7 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
 
 #### 7b. `AGENTS.md` — ブログ記事作成ルール > 記事構造ガイドラインに追加
 
-```diff
+````diff
  ### 記事構造ガイドライン
  1. 見出し階層の適切な使用（h1 → h2 → h3）
  2. コードブロックには言語を指定
@@ -318,7 +329,7 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
  4. 内部リンクは相対パス使用
  5. OGP画像は自動生成（Route Handler経由）
 +6. Mermaid.jsダイアグラムは ` ```mermaid ` コードブロックで記述（自動描画・テーマ連動）
-```
+````
 
 #### 7c. `AGENTS.md` — Content Pipelineセクションに追加
 
@@ -334,15 +345,15 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
 
 ## ファイル変更一覧
 
-| ファイル | 変更種別 | 内容 |
-|---|---|---|
-| `package.json` | 修正 | `mermaid` パッケージ追加 |
-| `src/lib/rehype-mermaid.ts` | 新規 | mermaidコードブロックをコンポーネントに変換するrehypeプラグイン |
-| `src/components/MermaidDiagram.tsx` | 新規 | Mermaid描画クライアントコンポーネント（テーマ連動） |
-| `src/components/MDXComponent.tsx` | 修正 | `MermaidDiagram` をカスタムコンポーネントに登録 |
-| `src/lib/mdx.tsx` | 修正 | `rehypeMermaid` をプラグインチェーンに追加 |
-| `src/styles/styles.css` | 修正（必要に応じて） | Mermaid SVG用のスタイル微調整 |
-| `AGENTS.md` | 修正 | MermaidDiagramコンポーネント・記事ガイドライン・Content Pipeline追記 |
+| ファイル                            | 変更種別             | 内容                                                                 |
+| ----------------------------------- | -------------------- | -------------------------------------------------------------------- |
+| `package.json`                      | 修正                 | `mermaid` パッケージ追加                                             |
+| `src/lib/rehype-mermaid.ts`         | 新規                 | mermaidコードブロックをコンポーネントに変換するrehypeプラグイン      |
+| `src/components/MermaidDiagram.tsx` | 新規                 | Mermaid描画クライアントコンポーネント（テーマ連動）                  |
+| `src/components/MDXComponent.tsx`   | 修正                 | `MermaidDiagram` をカスタムコンポーネントに登録                      |
+| `src/lib/mdx.tsx`                   | 修正                 | `rehypeMermaid` をプラグインチェーンに追加                           |
+| `src/styles/styles.css`             | 修正（必要に応じて） | Mermaid SVG用のスタイル微調整                                        |
+| `AGENTS.md`                         | 修正                 | MermaidDiagramコンポーネント・記事ガイドライン・Content Pipeline追記 |
 
 ---
 
@@ -350,13 +361,13 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
 
 ### Mermaid組み込みテーマ
 
-| テーマ名 | 用途 |
-|---|---|
-| `default` | ライトモード用（青/グレー基調） |
-| `dark` | ダークモード用（暗背景・明るいテキスト） |
-| `neutral` | グレースケール |
-| `forest` | 緑基調 |
-| `base` | カスタマイズ可能 |
+| テーマ名  | 用途                                     |
+| --------- | ---------------------------------------- |
+| `default` | ライトモード用（青/グレー基調）          |
+| `dark`    | ダークモード用（暗背景・明るいテキスト） |
+| `neutral` | グレースケール                           |
+| `forest`  | 緑基調                                   |
+| `base`    | カスタマイズ可能                         |
 
 ### テーマ切り替えフロー
 
@@ -372,9 +383,9 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
 ### マッピング
 
 | サイトテーマ (`resolvedTheme`) | Mermaidテーマ |
-|---|---|
-| `'light'` | `'default'` |
-| `'dark'` | `'dark'` |
+| ------------------------------ | ------------- |
+| `'light'`                      | `'default'`   |
+| `'dark'`                       | `'dark'`      |
 
 ---
 
