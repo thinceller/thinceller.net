@@ -13,7 +13,7 @@ importers:
         version: 3.1.1(supports-color@7.2.0)
       '@mdx-js/react':
         specifier: 3.1.1
-        version: 3.1.1(@types/react@19.3.1)(react@19.3.1)
+        version: 3.1.1(@types/react@19.3.3)(react@19.3.1)
       '@shikijs/langs':
         specifier: 4.4.3
         version: 4.4.3
@@ -43,7 +43,7 @@ importers:
         version: 4.0.3
       lucide-react:
         specifier: 1.79.0
-        version: 1.79.0(@types/react@19.3.1)(react@19.3.1)
+        version: 1.79.0(@types/react@19.3.3)(react@19.3.1)
       mermaid:
         specifier: 11.17.2
         version: 11.17.2
@@ -106,8 +106,8 @@ importers:
         specifier: 24.19.2
         version: 24.19.2
       '@types/react':
-        specifier: 19.3.1
-        version: 19.3.1
+        specifier: 19.3.3
+        version: 19.3.3
       babel-plugin-react-compiler:
         specifier: 1.0.0
         version: 1.0.0
@@ -914,8 +914,8 @@ packages:
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
 
-  '@types/react@19.3.1':
-    resolution: {integrity: sha512-HNTkBIm8zmHX8LUXX2vtZ/ONzehrV1J3abl2fUIiZ5qxTYRCj/z+rDeFwOltqCLl9lRdUTKWT41OLtYuFV/Arg==}
+  '@types/react@19.3.3':
+    resolution: {integrity: sha512-K8uWpJc4teiuOPdiP1umjeA9rGMgVPiXuoL66fcS1QlwBT1WMqY8PORmub9FadopIs+RCW6siYEs7Lpq+vDlog==}
 
   '@types/trusted-types@2.0.7':
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
@@ -3430,10 +3430,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@mdx-js/react@3.1.1(@types/react@19.3.1)(react@19.3.1)':
+  '@mdx-js/react@3.1.1(@types/react@19.3.3)(react@19.3.1)':
     dependencies:
       '@types/mdx': 2.0.14
-      '@types/react': 19.3.1
+      '@types/react': 19.3.3
       react: 19.3.1
 
   '@mermaid-js/parser@1.2.1':
@@ -3986,7 +3986,7 @@ snapshots:
 
   '@types/normalize-package-data@2.4.4': {}
 
-  '@types/react@19.3.1':
+  '@types/react@19.3.3':
     dependencies:
       csstype: 3.2.3
 
@@ -5170,11 +5170,11 @@ snapshots:
 
   lru-cache@11.2.6: {}
 
-  lucide-react@1.79.0(@types/react@19.3.1)(react@19.3.1):
+  lucide-react@1.79.0(@types/react@19.3.3)(react@19.3.1):
     dependencies:
       react: 19.3.1
     optionalDependencies:
-      '@types/react': 19.3.1
+      '@types/react': 19.3.3
 
   magic-string@1.4.5:
     dependencies:
